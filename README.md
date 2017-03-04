@@ -24,3 +24,5 @@ You can start using this app by following a few simple steps:
 5. Start the app by executing *npm start*
 6. Enjoy!
 
+## Step by step guide to rebuild this app
+Want to develop another awesome app using fancy JS stuff? Maybe this [guide](docs/HOWTO.md) can help you!
