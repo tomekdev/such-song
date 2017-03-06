@@ -21,7 +21,7 @@ You can start using this app by following a few simple steps:
 2. Make sure the MongoDB deamon is up and running
 3. Clone this repository into a directory of your choice and *cd* into that directory. Alternatively you can download the packaged source code and unzip it on your local file system
 4. Let npm handle other dependencies by running *npm install*
-5. Configure such-song in the config.js file. See config.js.example 
+5. Configure *such-song* in the *config.js* file. See config.js.example 
 6. Start the app by executing *npm start*
 7. Enjoy!
 
