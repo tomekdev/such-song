@@ -1,8 +1,7 @@
 var db = require('../db')
 var lineSchema = db.Schema({
     text: {
-        type: String,
-        required: true
+        type: String
     }
 })
 
