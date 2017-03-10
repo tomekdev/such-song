@@ -1,0 +1,43 @@
+<md-card>
+    <md-card-title>
+        <md-card-title-text layout="row" layout-align="space-between end">
+            <div layout="column" layout-align="space-between start" layout-fill>
+                <span class="md-headline">{{song.name}}</span>
+                <span class="md-subhead">{{song.author}}</span>
+            </div>
+            <div layout="row">
+                <md-button class="md-fab md-primary" aria-label="Edit song" ng-show="!flags.editSong" ng-click="flags.editSong = true">
+                    <md-icon alt="edit">create</md-icon>
+                </md-button>
+                <md-button class="md-fab" aria-label="Edit song" ng-show="flags.editSong" ng-click="saveLines()" style="background-color: seagreen;">
+                    <md-icon alt="edit">save</md-icon>
+                </md-button>
+                <md-button class="md-fab" aria-label="Edit song" ng-show="flags.editSong" ng-click="dismissLines()" style="background-color: firebrick;">
+                    <md-icon alt="edit">close</md-icon>
+                </md-button>
+            </div>
+        </md-card-title-text>
+    </md-card-title>
+</md-card>
+<md-button class="md-fab" aria-label="Add line" ng-if="flags.editSong && song.lyrics.length === 0" ng-click="addLine(0)">
+    <md-icon alt="edit">add</md-icon>
+</md-button>
+<div ng-repeat="(index, line) in song.lyrics" ng-mouseenter="active? focused = true : null" ng-mouseleave="focused = false">
+    <md-button class="md-fab md-mini" aria-label="Add line" ng-show="focused && flags.editSong" ng-click="addLine(index); focused = false">
+        <md-icon alt="edit">add</md-icon>
+    </md-button>
+    <div layout="row" flex>
+        <md-input-container md-no-float class="md-block" layout-fill>
+            <input ng-model="line.text" ng-disabled="!flags.editSong" ng-focus="active = true; focused = true" ng-blur="active = false" ng-change="line.dirty = true" ng-keyup="$event.keyCode == 13 ? addLine(index+1): null">
+        </md-input-container>
+        <md-button class="md-fab md-mini md-warn" aria-label="Add line" ng-show="flags.editSong && line.dirty" ng-click="updateLine(line)" style="background-color: seagreen;">
+            <md-icon alt="edit">save</md-icon>
+        </md-button>
+        <md-button class="md-fab md-mini md-warn" aria-label="Add line" ng-show="flags.editSong" ng-click="deleteLine(line, index)" style="background-color: firebrick;">
+            <md-icon alt="edit">delete</md-icon>
+        </md-button>
+    </div>
+    <md-button class="md-fab md-mini" aria-label="Add line" ng-show="focused && flags.editSong" ng-click="addLine(index+1); focused = false">
+        <md-icon alt="edit">add</md-icon>
+    </md-button>
+</div>
