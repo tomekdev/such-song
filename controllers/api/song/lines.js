@@ -1,4 +1,6 @@
-var router = require('express').Router({mergeParams: true})
+var router = require('express').Router({
+    mergeParams: true
+})
 var bodyParser = require('body-parser')
 var Line = require('../../../models/line')
 var Song = require('../../../models/song')
@@ -66,11 +68,22 @@ router.delete('/line/:lineId', function (req, res, next) {
         if (err) {
             return next(err)
         }
-        line.remove(function (err) {
+        Song.findById(req.params.songId, function (err, song) {
             if (err) {
                 return next(err)
             }
-            res.status(200).json(line)
+            song.lyrics.splice(song.lyrics.indexOf(req.params.lineId), 1);
+            song.save(function (err, post) {
+                if (err) {
+                    return next(err)
+                }
+                line.remove(function (err) {
+                    if (err) {
+                        return next(err)
+                    }
+                    res.status(200).json(line)
+                });
+            });
         });
     });
 });
