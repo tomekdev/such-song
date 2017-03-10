@@ -1,7 +1,6 @@
 var router = require('express').Router()
 
-router.get('/', function (req, res) {
-  res.send('Hello world!');
-})
+router.use('/api', require('./api'))
+router.use('/', require('./static'))
 
 module.exports = router

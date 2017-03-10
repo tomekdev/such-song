@@ -1,10 +1,13 @@
 {
   "name": "suchsong",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --debug server.js"
   },
   "dependencies": {
+    "body-parser": "^1.16.1",
     "express": "^4.14.1",
+    "mongoose": "^4.8.5",
     "morgan": "^1.8.1"
   },
   "devDependencies": {}
