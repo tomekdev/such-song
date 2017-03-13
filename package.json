@@ -1,12 +1,16 @@
 {
   "name": "suchsong",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --debug server.js"
+    "start": "gulp js && node server.js",
+    "dev": "concurrently \"node --debug server.js\" \"gulp watch\" "
   },
   "dependencies": {
     "body-parser": "^1.16.1",
+    "concurrently": "^3.4.0",
     "express": "^4.14.1",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-ng-annotate": "^2.0.0",
     "mongoose": "^4.8.5",
     "morgan": "^1.8.1"
   },

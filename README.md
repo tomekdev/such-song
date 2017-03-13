@@ -13,7 +13,7 @@ You can:
 
 Ant he best of all, everything is free and open source!
 
-Technically, the app is basing on a NodeJS server using Express, Mongoose and Angular2 in the front end part.
+Technically, the app is basing on a NodeJS server using Express, Mongoose and Angular Material in the front end part.
 ## Quickstart guide
 You can start using this app by following a few simple steps:
 

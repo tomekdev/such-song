@@ -28,9 +28,9 @@ Having all of these basic apps installed you can move on to the next step, which
 As the app was written basing on knowledge from the "Write Modern Web Apps with the MEAN Stack: Mongo, Express, AngularJS, and Node.js" book written by Jeff Dickey, the applications structure is also strongly influenced by this book.
 
 Skeleton files include:
-- The starting point of the app, which is the *server.js* file located in the application root directory. Its only responsibility is to create the express app and start the server. Additionally a logger provider was attached to the application object to provide logs for easier debugging
+- The starting point of the app, which is the *server.js* file located in the application root directory. Its only responsibility is to create the express app and start the server. Additionally, a logger provider was attached to the application object to provide logs for easier debugging
 - The package.json file for aggregating dependencies and script configurations. The developer doesn't have to worry about adding dependencies to the list, as everything happens automatically with npm, by issuing *npm install <dependency>* command with an additional *--save* option. The *scripts* section contains only two scripts - for starting the app and for starting the app in debug mode. First of them is executed, when issuing *npm start*, second one on *npm run dev*
-- The db.js file establishing a mongoose connection to the MongoDB deamon on given url. Additionally the connection url has been exported to a seperate config.js file.
+- The db.js file establishing a mongoose connection to the MongoDB deamon on given url. Additionally, the connection url has been exported to a seperate config.js file.
 
 As you may notice the skeleton part uses two new dependencies, which are important for the app:
 - express - a NodeJS web application framework meant for simplifying developing web applications with Node. More about it in the Controller section
@@ -40,3 +40,13 @@ The above files can be referred to as server setup and boilerplate code. The rea
 The main file is of course the index.js file, but right now it just redirects all requests to the api directory. In the future this file will filter requests demanding data from static requests serving the front-end application code.
 Inside the controller directory is another index.js file routing requests to appropriate resources. In our example the song resource.
 The sounds.js file defines what happens, when a request of certain type reaches the server. One key advantage of the Express framework are the methods for each HTTP request type. You just type *router.get('/resource-path', callback)* and define what happens on such request type. This is where the magic happens! Inside callback methods you can operate on mongoose models or do whatever you want. 
+### Creating the front-end part
+The front-end part is a basic Angular Material app created following [this](https://github.com/angular/material-start/tree/es6-tutorial) tutorial. The app consists of following parts:
+- the main layout and application init (app.html) - just a basic html document loading all scripts and stylesheets required for Angular Material
+- the app config file (module.js) - responsible for loading dependent modules and configuring various aspects of the application (e.g. theme colors)
+- the router configuration file (routes.js) - defining possible routes and associated controllers/views
+- controllers (*.ctrl.js) - the "glue" between views and data services
+- services (*.svc.js) - defining methods for data access and manipulation
+- views (views/*.html) - parts of the page dynamically inserted by the router
+
+At this point of time our front-end application is just a proof of concept with tightly coupled dependencies. The main goal for newer versions is to add websockets communication and improve code quality.
