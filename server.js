@@ -5,6 +5,6 @@ var app = express()
 app.use(logger('dev'))
 app.use(require('./controllers'))
 
-var server = app.listen(3000, function () {
+var server = app.listen(process.env.PORT || 3000, function () {
   console.log('Server successfully started on port %d', server.address().port)
 })
