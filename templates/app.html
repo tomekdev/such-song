@@ -2,18 +2,48 @@
 <html ng-app='app'>
 
 <head>
+    <meta charset="utf-8">        
+    <meta name="author" content="tomekdev">
+    <meta name="description" content="Song management webapp">
+
+    <!-- Mobile Stuff -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <!-- Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Such song">
+<!--    <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon.png">-->
+
+    <!-- Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#607D8B">
+    <meta name="apple-mobile-web-app-title" content="Such song">
+<!--    <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">-->
+
+    <!-- Windows 8 -->
+<!--    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon.png">-->
+    <meta name="msapplication-TileColor" content="#607D8B">
+
+
+    <meta name="theme-color" content="#607D8B">
+
+<!--    <link rel="shortcut icon" href="favicon.ico">-->
+
+    <title>Such song</title>
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <title>Such song</title>
+    <meta name="viewport" content="width=device-width">
 </head>
 
-<body ng-controller='ApplicationCtrl'>
+<body ng-controller='ApplicationCtrl' md-swipe-right="flags.openMenu = true">
     </div>
     <md-toolbar class="md-toolbar-tools">
         <h2 flex="" md-truncate="">Such song</h2>
     </md-toolbar>
     <div flex layout="row">
-        <md-sidenav md-component-id="sidenav-left" md-is-locked-open="true" class="md-whiteframe-4dp">
+        <md-sidenav md-component-id="sidenav-left" md-is-locked-open="$mdMedia('gt-md')" class="md-whiteframe-4dp">
             <md-list flex>
                 <md-subheader class="md-no-sticky">
                     <div layout="row" layout-align="space-between center">
@@ -39,7 +69,7 @@
                     </form>
                 </md-subheader>
                 <md-list>
-                    <md-list-item ng-repeat="song in songs" href='/#/song' ng-click="selectSong(song)">
+                    <md-list-item ng-repeat="song in songs" href='/#/song' ng-click="selectSong(song); closeSidenav()">
                         <div class="md-list-item-text">
                             <span>{{song.name}}</span><span ng-if="song.author"> - {{song.author}}</span>
                         </div>

@@ -21,4 +21,12 @@ angular.module('app')
                     $scope.flags.addSong = false;
                 });
         }
+    
+        $scope.openSidenav = function() {
+            $mdSidenav('sidenav-left').toggle();
+        };
+    
+        $scope.closeSidenav = function() {
+            $mdSidenav('sidenav-left').toggle();
+        };
     })
