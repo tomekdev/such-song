@@ -1,8 +1,8 @@
 var router = require('express').Router()
-var bodyParser = require('body-parser')
 var Song = require('../../models/song')
+var websockets = require('../../websockets')
 
-router.use(bodyParser.json())
+
 
 router.use('/song/:songId', require('./song'))
 
@@ -14,8 +14,11 @@ router.get('/songs', function (req, res, next) {
             if (err) {
                 return next(err)
             }
+//        websockets.broadcast('new_post', "post")
             res.json(posts)
         })
+    
+
 })
 
 router.get('/song/:songId', function (req, res, next) {

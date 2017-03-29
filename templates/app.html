@@ -2,52 +2,102 @@
 <html ng-app='app'>
 
 <head>
+    <meta charset="utf-8">
+    <meta name="author" content="tomekdev">
+    <meta name="description" content="Song management webapp">
+
+    <!-- Mobile Stuff -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <!-- Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Such song">
+    <!--    <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon.png">-->
+
+    <!-- Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#607D8B">
+    <meta name="apple-mobile-web-app-title" content="Such song">
+    <!--    <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">-->
+
+    <!-- Windows 8 -->
+    <!--    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon.png">-->
+    <meta name="msapplication-TileColor" content="#607D8B">
+
+
+    <meta name="theme-color" content="#607D8B">
+
+    <!--    <link rel="shortcut icon" href="favicon.ico">-->
+
+    <title>Such song</title>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <title>Such song</title>
+    <meta name="viewport" content="width=device-width">
 </head>
 
-<body ng-controller='ApplicationCtrl'>
-    </div>
+<body ng-controller='ApplicationCtrl as ctrl' md-swipe-right="flags.openMenu = true" layout="column">
     <md-toolbar class="md-toolbar-tools">
         <h2 flex="" md-truncate="">Such song</h2>
+        <div layout="row" layout-align="end center">
+            <md-menu>
+                <md-button ng-click="$mdOpenMenu()" ng-show="!!ctrl.user">
+                    <md-icon alt="user">person</md-icon>
+                    {{ctrl.user}}
+                </md-button>
+                <md-menu-content width="4">
+                    <md-menu-item>
+                        <md-button ng-click="ctrl.logout()">
+                            <md-icon alt="logout">power_settings_new</md-icon>
+                            Logout
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+            <md-button aria-label="Menu" class="md-icon-button" ng-click="ctrl.flags.showSideNav = true">
+                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
+                </svg>
+            </md-button>
+        </div>
     </md-toolbar>
     <div flex layout="row">
-        <md-sidenav md-component-id="sidenav-left" md-is-locked-open="true" class="md-whiteframe-4dp">
+        <md-sidenav md-component-id="sidenav-left" md-is-locked-open="$mdMedia('gt-md')" class="md-whiteframe-4dp" md-is-open="ctrl.flags.showSideNav">
             <md-list flex>
                 <md-subheader class="md-no-sticky">
                     <div layout="row" layout-align="space-between center">
                         Songs
-                        <md-button class="md-fab md-mini" aria-label="add song" ng-click="flags.addSong = !flags.addSong" ng-show="!flags.addSong">
+                        <md-button class="md-fab md-mini" aria-label="add song" ng-click="ctrl.flags.addSong = true" ng-show="!ctrl.flags.addSong && !!ctrl.user">
                             <md-icon alt="add song">add</md-icon>
                         </md-button>
                     </div>
-                    <form ng-show="flags.addSong" ng-submit="addSong()">
+                    <form ng-show="ctrl.flags.addSong  && !!ctrl.user" ng-submit="ctrl.addSong()">
                         <md-input-container class="md-block" flex-gt-sm>
                             <label>Name</label>
-                            <input required ng-model="newSong.name">
+                            <input required ng-model="ctrl.newSong.name">
                         </md-input-container>
                         <md-input-container class="md-block" flex-gt-sm>
                             <label>Author</label>
-                            <input ng-model="newSong.author">
+                            <input ng-model="ctrl.newSong.author">
                         </md-input-container>
                         <div layout="row" layout-align="end">
 
-                            <md-button ng-click="flags.addSong = false; newSong = null">Dismiss</md-button>
+                            <md-button ng-click="ctrl.flags.addSong = false; ctrl.newSong = null">Dismiss</md-button>
                             <md-button type="submit" class="md-primary md-raised">Save</md-button>
                         </div>
                     </form>
                 </md-subheader>
                 <md-list>
-                    <md-list-item ng-repeat="song in songs" href='/#/song' ng-click="selectSong(song)">
+                    <md-list-item ng-repeat="song in ctrl.songs" href='/#/song' ng-click="ctrl.selectSong(song); ctrl.flags.showSideNav = false">
                         <div class="md-list-item-text">
                             <span>{{song.name}}</span><span ng-if="song.author"> - {{song.author}}</span>
                         </div>
                     </md-list-item>
                 </md-list>
         </md-sidenav>
-        <md-content flex id="content">
-            <div class='container' ng-view></div>
+        <md-content flex layout="column" id="content">
+            <div class="container" layout="column" flex ng-view></div>
         </md-content>
     </div>
 

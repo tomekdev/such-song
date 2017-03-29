@@ -1,0 +1,29 @@
+<div flex layout="row" layout-align="center center" ng-controller="LoginCtrl as ctrl">
+    <md-card flex-gt-md="33">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline">Login</span>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+            <form ng-submit="ctrl.login(username, password); ctrl.flags.loginBusy=true" layout="column" layout-align="stretch center">
+                <md-input-container>
+                    <label>Username</label>
+                    <input ng-model="username" ng-disabled="ctrl.flags.loginBusy">
+                </md-input-container>
+
+                <md-input-container>
+                    <label>Password</label>
+                    <input ng-model="password" type="password" ng-disabled="ctrl.flags.loginBusy">
+                </md-input-container>
+                <div layout="row" layout-align="center center" ng-show="ctrl.flags.loginBusy">
+                    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                </div>
+                <div layout="row" layout-align="end">
+                    <md-button type="submit" ng-disabled="ctrl.flags.loginBusy">Reset password</md-button>
+                    <md-button type="submit" class="md-primary md-raised" ng-disabled="ctrl.flags.loginBusy">Login</md-button>
+                </div>
+            </form>
+        </md-card-content>
+    </md-card>
+</div>
