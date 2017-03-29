@@ -1,32 +1,34 @@
-angular.module('app')
-    .controller('ApplicationCtrl', function ($scope, $mdSidenav, SongSvc) {
-
-        $scope.selectSong = selectSong;
-        $scope.addSong = addSong;
-
-        SongSvc.fetchAll()
-            .then(function (songs) {
-                $scope.songs = songs;
-            });
-
-        function selectSong(song) {
-            $scope.song = song;
-            $scope.$broadcast("song_selected", song);
-        }
-
-        function addSong() {
-            SongSvc.add($scope.newSong)
-                .then(function (song) {
-                    $scope.songs.push(song)
-                    $scope.flags.addSong = false;
-                });
-        }
-    
-        $scope.openSidenav = function() {
-            $mdSidenav('sidenav-left').toggle();
-        };
-    
-        $scope.closeSidenav = function() {
-            $mdSidenav('sidenav-left').toggle();
-        };
+function ApplicationCtrl(SongSvc, LineSvc, UserSvc, $location) {
+    var that = this;
+    this.songSvc = SongSvc;
+    this.lineSvc = LineSvc;
+    this.userSvc = UserSvc;
+    this.$location = $location;
+    SongSvc.fetchAll().then(function(songs){
+        that.songs = songs;
     })
+}
+
+ApplicationCtrl.prototype = {
+    get user() {
+        return this.userSvc.currentUser;
+    },
+    logout: function() {
+        this.userSvc.logout();
+        this.$location.path('/login')
+    },
+    addSong: function() {
+        var that = this;
+        this.songSvc.add(this.newSong)
+            .then(function (song) {
+                that.songs.push(song)
+                that.flags.addSong = false;
+            });
+    },
+    selectSong: function (song) {
+        this.songSvc.selectedSong = song;
+    }
+};
+
+angular.module('app')
+    .controller('ApplicationCtrl', ApplicationCtrl);
