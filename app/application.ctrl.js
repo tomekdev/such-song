@@ -23,6 +23,7 @@ ApplicationCtrl.prototype = {
             .then(function (song) {
                 that.songs.push(song)
                 that.flags.addSong = false;
+                that.newSong = {};
             });
     },
     selectSong: function (song) {
