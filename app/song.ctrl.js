@@ -1,7 +1,13 @@
-function SongController(SongSvc, LineSvc, WebsocketSvc) {
+function SongController($scope, SongSvc, LineSvc, WebsocketSvc) {
     this.songSvc = SongSvc;
     this.lineSvc = LineSvc;
     this.websocketSvc = WebsocketSvc;
+    WebsocketSvc.subscribe("line.add", (data) => {
+        if (data.song_id === SongSvc.selectedSong._id) {
+            SongSvc.selectedSong.lyrics.splice(data.position, 0, data.line);
+            $scope.$apply();
+        }
+    })
 }
 
 SongController.prototype = {
@@ -27,8 +33,6 @@ SongController.prototype = {
                 line._id = response._id;
                 line.dirty = false;
             });
-        this.websocketSvc.send("add","DGHHFD")
-        this.websocketSvc.subscribe("add",function(data){console.log(data)})
     },
     updateLine: function (line) {
         this.lineSvc.update(this.songSvc.selectedSong._id, line)

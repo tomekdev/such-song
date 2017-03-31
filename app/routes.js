@@ -6,7 +6,6 @@ angular.module('app')
 //                templateUrl: '/views/login.html'
             })
             .when('/login', {
-                controller: 'LoginCtrl',
                 templateUrl: '/views/login.html'
             })
             .when('/register', {
@@ -14,7 +13,6 @@ angular.module('app')
                 templateUrl: '/views/register.html'
             })
             .when('/song', {
-                controller: 'SongCtrl',
                 templateUrl: '/views/song.html'
             })
             .otherwise({

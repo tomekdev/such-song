@@ -4,6 +4,7 @@ var router = require('express').Router({
 var bodyParser = require('body-parser')
 var Line = require('../../../models/line')
 var Song = require('../../../models/song')
+var websockets = require('../../../websockets')
 
 router.use(bodyParser.json())
 
@@ -15,18 +16,24 @@ router.post('/lines', function (req, res, next) {
         if (err) {
             return next(err)
         }
-        line.save(function (err, post) {
+        line.save(function (err, data) {
             if (err) {
                 return next(err)
             }
-            song.lyrics.splice(req.body.position !== undefined? req.body.position : song.lyrics.length, 0, line);
-            song.save(function (err, post) {
+            var iPosition = req.body.position !== undefined? req.body.position : song.lyrics.length;
+            song.lyrics.splice(iPosition, 0, line);
+            song.save(function (err, data) {
                 if (err) {
                     line.remove();
                     return next(err)
                 }
             })
-            res.status(201).json(post)
+            websockets.broadcast('line.add', {
+                song_id: req.params.songId,
+                position: iPosition,
+                line: line
+            });
+            res.status(201).json(data)
         })
 
     });

@@ -1,4 +1,4 @@
-function ApplicationCtrl(SongSvc, LineSvc, UserSvc, $location) {
+function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, $scope, $location) {
     var that = this;
     this.songSvc = SongSvc;
     this.lineSvc = LineSvc;
@@ -6,7 +6,11 @@ function ApplicationCtrl(SongSvc, LineSvc, UserSvc, $location) {
     this.$location = $location;
     SongSvc.fetchAll().then(function(songs){
         that.songs = songs;
-    })
+    });
+    WebsocketSvc.subscribe("song.add", (song) => {
+        this.songs.push(song);
+        $scope.$apply();
+    });
 }
 
 ApplicationCtrl.prototype = {

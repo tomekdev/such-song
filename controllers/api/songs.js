@@ -14,7 +14,6 @@ router.get('/songs', function (req, res, next) {
             if (err) {
                 return next(err)
             }
-//        websockets.broadcast('new_post', "post")
             res.json(posts)
         })
     
@@ -37,11 +36,12 @@ router.post('/songs', function (req, res, next) {
         name: req.body.name,
         author: req.body.author
     })
-    song.save(function (err, post) {
+    song.save(function (err, data) {
         if (err) {
             return next(err)
         }
-        res.status(201).json(post)
+        res.status(201).json(data)
+        websockets.broadcast('song.add', song)
     })
 })
 

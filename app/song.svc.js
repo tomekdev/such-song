@@ -8,10 +8,7 @@ SongSvc.prototype = {
         },
     
         set selectedSong(song) {
-            if(song.lyrics) {
-                this._selectedSong = song;
-            }
-            else if(!this._selectedSong || this._selectedSong._id !== song._id) {
+            if(!this._selectedSong || this._selectedSong._id !== song._id) {
                 this._selectedSong = song;
                 var that = this;
                 this.$http.get('/api/song/' + song._id/*, {

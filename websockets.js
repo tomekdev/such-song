@@ -22,8 +22,8 @@ exports.connect = function (server) {
     })
 }
 
-exports.broadcast = function (topic, data) {
-    var json = JSON.stringify(data)
+exports.broadcast = function (event, data) {
+    var json = JSON.stringify({event: event, data: data})
     clients.forEach(function (client) {
         client.send(json)
     })
