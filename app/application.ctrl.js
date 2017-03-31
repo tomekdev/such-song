@@ -1,12 +1,17 @@
 function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, $scope, $location) {
-    var that = this;
     this.songSvc = SongSvc;
     this.lineSvc = LineSvc;
     this.userSvc = UserSvc;
     this.$location = $location;
-    SongSvc.fetchAll().then(function(songs){
-        that.songs = songs;
-    });
+    this.flags = {};
+    
+    $scope.$on("login", () => {
+        SongSvc.fetchAll().then((songs) => {
+            this.songs = songs;
+            this.flags.showSideNav = true;
+        });
+    })
+    
     WebsocketSvc.subscribe("song.add", (song) => {
         this.songs.push(song);
         $scope.$apply();
@@ -17,11 +22,11 @@ ApplicationCtrl.prototype = {
     get user() {
         return this.userSvc.currentUser;
     },
-    logout: function() {
+    logout: function () {
         this.userSvc.logout();
         this.$location.path('/login')
     },
-    addSong: function() {
+    addSong: function () {
         var that = this;
         this.songSvc.add(this.newSong)
             .then(function (song) {
