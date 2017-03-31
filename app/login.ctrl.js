@@ -1,20 +1,15 @@
-function LoginCtrl(UserSvc, WebsocketSvc, $location) {
-    this.userSvc = UserSvc;
-    this.websocketSvc = WebsocketSvc;
-    this.$location = $location;
-}
+function LoginCtrl($scope, $location, UserSvc, WebsocketSvc) {
 
-LoginCtrl.prototype = {
-    login: function (username, password) {
-        var that = this;
-        this.userSvc.login(username, password)
-            .then(function (user) {
-                that.websocketSvc.connect(that.userSvc.token);
-                that.flags.loginBusy = false;
-                that.$location.path('/')
+    this.login = function(username, password) {
+        UserSvc.login(username, password)
+            .then((user)  => {
+                WebsocketSvc.connect(UserSvc.token);
+                this.flags.loginBusy = false;
+                $location.path('/')
+                $scope.$emit("login");
             })
     }
-};
+}
 
 angular.module('app')
     .controller('LoginCtrl', LoginCtrl);
