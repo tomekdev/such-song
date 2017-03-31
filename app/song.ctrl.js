@@ -2,9 +2,16 @@ function SongController($scope, SongSvc, LineSvc, WebsocketSvc) {
     this.songSvc = SongSvc;
     this.lineSvc = LineSvc;
     this.websocketSvc = WebsocketSvc;
+    
     WebsocketSvc.subscribe("line.add", (data) => {
         if (data.song_id === SongSvc.selectedSong._id) {
             SongSvc.selectedSong.lyrics.splice(data.position, 0, data.line);
+            $scope.$apply();
+        }
+    })
+    WebsocketSvc.subscribe("line.update", (data) => {
+        if (data.song_id === SongSvc.selectedSong._id) {
+            SongSvc.selectedSong.lyrics.filter((line) => line._id === data.line._id).forEach((line) => line.text = data.line.text);
             $scope.$apply();
         }
     })
@@ -34,6 +41,20 @@ SongController.prototype = {
                 line.dirty = false;
             });
     },
+    
+    changeLine: function(e, line, index) {
+        if (e.keyCode === 13 )
+        {
+            this.addLine(index+1)
+        }
+        else {
+            this.websocketSvc.send("line.update", {
+                song_id: this.songSvc.selectedSong._id,
+                line: line
+            })
+        }
+    },
+    
     updateLine: function (line) {
         this.lineSvc.update(this.songSvc.selectedSong._id, line)
             .then(function (response) {

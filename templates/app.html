@@ -37,7 +37,7 @@
     <meta name="viewport" content="width=device-width">
 </head>
 
-<body ng-controller='ApplicationCtrl as ctrl' md-swipe-right="flags.openMenu = true" layout="column">
+<body ng-controller='ApplicationCtrl as ctrl' layout="column">
     <md-toolbar class="md-toolbar-tools">
         <h2 flex="" md-truncate="">Such song</h2>
         <div layout="row" layout-align="end center">
@@ -63,7 +63,7 @@
         </div>
     </md-toolbar>
     <div flex layout="row">
-        <md-sidenav md-component-id="sidenav-left" md-is-locked-open="$mdMedia('gt-md')" class="md-whiteframe-4dp" md-is-open="ctrl.flags.showSideNav">
+        <md-sidenav md-component-id="sidenav-left" md-is-locked-open="$mdMedia('gt-md') && ctrl.songs" class="md-whiteframe-4dp" md-is-open="ctrl.flags.showSideNav">
             <md-list flex>
                 <md-subheader class="md-no-sticky">
                     <div layout="row" layout-align="space-between center">

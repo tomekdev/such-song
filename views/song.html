@@ -29,7 +29,7 @@
         </md-button>
         <div layout="row" flex>
             <md-input-container md-no-float class="md-block" layout-fill>
-                <input ng-model="line.text" ng-disabled="!ctrl.flags.editSong" ng-focus="active = true" ng-click="focused = true" ng-blur="active = false" ng-change="line.dirty = true" ng-keyup="$event.keyCode == 13 ? ctrl.addLine(index+1): null; $event.keyCode == 13 ? focused = false: null" id="line_{{$index}}">
+                <input ng-model="line.text" ng-disabled="!ctrl.flags.editSong" ng-focus="active = true" ng-click="focused = true" ng-blur="active = false" ng-change="line.dirty = true" ng-keyup="ctrl.changeLine($event, line, index); $event.keyCode == 13 ? focused = false: null" id="line_{{$index}}">
             </md-input-container>
             <md-button class="md-fab md-mini md-warn" aria-label="Add line" ng-show="ctrl.flags.editSong && line.dirty" ng-click="ctrl.updateLine(line)" style="background-color: seagreen;">
                 <md-icon alt="edit">save</md-icon>
