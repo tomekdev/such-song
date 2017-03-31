@@ -32,7 +32,7 @@ router.post('/lines', function (req, res, next) {
                 song_id: req.params.songId,
                 position: iPosition,
                 line: line
-            });
+            }, req.auth);
             res.status(201).json(data)
         })
 

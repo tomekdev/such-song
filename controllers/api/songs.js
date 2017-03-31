@@ -41,7 +41,7 @@ router.post('/songs', function (req, res, next) {
             return next(err)
         }
         res.status(201).json(data)
-        websockets.broadcast('song.add', song)
+        websockets.broadcast('song.add', song, req.auth)
     })
 })
 
