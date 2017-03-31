@@ -88,6 +88,10 @@ router.delete('/line/:lineId', function (req, res, next) {
                     if (err) {
                         return next(err)
                     }
+                    websockets.broadcast('line.delete', {
+                        song_id: req.params.songId,
+                        line_id: req.params.lineId
+                    }, req.auth);
                     res.status(200).json(line)
                 });
             });

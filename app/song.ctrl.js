@@ -9,9 +9,17 @@ function SongController($scope, SongSvc, LineSvc, WebsocketSvc) {
             $scope.$apply();
         }
     })
+    
     WebsocketSvc.subscribe("line.update", (data) => {
         if (data.song_id === SongSvc.selectedSong._id) {
             SongSvc.selectedSong.lyrics.filter((line) => line._id === data.line._id).forEach((line) => line.text = data.line.text);
+            $scope.$apply();
+        }
+    })
+    
+    WebsocketSvc.subscribe("line.delete", (data) => {
+        if (data.song_id === SongSvc.selectedSong._id) {
+            SongSvc.selectedSong.lyrics = SongSvc.selectedSong.lyrics.filter((line) => line._id !== data.line_id);
             $scope.$apply();
         }
     })
@@ -63,9 +71,9 @@ SongController.prototype = {
     },
 
     deleteLine: function (line, iPosition) {
-        this.lineSvc.delete($scope.song._id, line)
-            .then(function (response) {
-                $scope.song.lyrics.splice(iPosition, 1);
+        this.lineSvc.delete(this.songSvc.selectedSong._id, line)
+            .then((response) => {
+                this.songSvc.selectedSong.lyrics.splice(iPosition, 1);
             })
     },
 

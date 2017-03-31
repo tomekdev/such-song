@@ -34,7 +34,7 @@
             <md-button class="md-fab md-mini md-warn" aria-label="Add line" ng-show="ctrl.flags.editSong && line.dirty" ng-click="ctrl.updateLine(line)" style="background-color: seagreen;">
                 <md-icon alt="edit">save</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini md-warn" aria-label="Add line" ng-show="ctrl.flags.editSong" ng-click="deleteLine(line, index)" style="background-color: firebrick;">
+            <md-button class="md-fab md-mini md-warn" aria-label="Delete line" ng-show="ctrl.flags.editSong" ng-click="ctrl.deleteLine(line, index)" style="background-color: firebrick;">
                 <md-icon alt="edit">delete</md-icon>
             </md-button>
         </div>
