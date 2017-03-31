@@ -24,6 +24,8 @@ ApplicationCtrl.prototype = {
     },
     logout: function () {
         this.userSvc.logout();
+        this.flags.showSideNav = false;
+        this.songs = null;
         this.$location.path('/login')
     },
     addSong: function () {

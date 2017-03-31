@@ -1,21 +1,18 @@
 function UserSvc($http) {
-    this.$http = $http;
-}
-
-UserSvc.prototype = {
-    login: function (username, password) {
-        var that = this;
-        return this.$http.post('/api/sessions', {
+    
+    this.login = function (username, password) {
+        return $http.post('/api/sessions', {
             username: username,
             password: password
-        }).then(function (response) {
-            that.token = response.data;
-            that.$http.defaults.headers.common['X-Auth'] = response.data;
-            that.currentUser = username;
+        }).then((response) => {
+            this.token = response.data;
+            $http.defaults.headers.common['X-Auth'] = response.data;
+            this.currentUser = username;
             return username; //svc.getUser()
         })
-    },
-    logout: function () {
+    }
+    
+    this.logout = function () {
         this.currentUser = null;
     }
 }

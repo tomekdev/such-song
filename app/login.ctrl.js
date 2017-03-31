@@ -7,7 +7,9 @@ function LoginCtrl($scope, $location, UserSvc, WebsocketSvc) {
                 this.flags.loginBusy = false;
                 $location.path('/')
                 $scope.$emit("login");
-            })
+            }, () => {
+                this.flags.loginBusy = false;
+        })
     }
 }
 
