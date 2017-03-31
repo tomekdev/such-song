@@ -19,7 +19,7 @@ router.post('/lines', function (req, res, next) {
             if (err) {
                 return next(err)
             }
-            song.lyrics.splice(req.body.position || song.lyrics.length, 0, line);
+            song.lyrics.splice(req.body.position !== undefined? req.body.position : song.lyrics.length, 0, line);
             song.save(function (err, post) {
                 if (err) {
                     line.remove();
