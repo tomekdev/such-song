@@ -23,7 +23,9 @@ WebsocketSvc.prototype = {
                 callback(data);
             });
         }
-
+        this.connection.onclose = function (e) {
+            console.log("Connection closed")
+        }
     },
     send: function (event, data) {
         this.connection.send(JSON.stringify({
