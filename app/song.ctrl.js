@@ -1,5 +1,6 @@
-function SongController($scope, SongSvc, LineSvc, WebsocketSvc) {
+function SongController($scope, SongSvc, LineSvc, UserSvc, WebsocketSvc) {
     this.songSvc = SongSvc;
+    this.userSvc = UserSvc;
     this.lineSvc = LineSvc;
     this.websocketSvc = WebsocketSvc;
     
@@ -12,7 +13,17 @@ function SongController($scope, SongSvc, LineSvc, WebsocketSvc) {
     
     WebsocketSvc.subscribe("line.update", (data) => {
         if (data.song_id === SongSvc.selectedSong._id) {
-            SongSvc.selectedSong.lyrics.filter((line) => line._id === data.line._id).forEach((line) => line.text = data.line.text);
+            SongSvc.selectedSong.lyrics.filter((line) => line._id === data.line._id).forEach((line) => {
+                line.text = data.line.text;
+                line.editor = data.username;
+            });
+            $scope.$apply();
+        }
+    })
+    
+    WebsocketSvc.subscribe("line.save", (data) => {
+        if (data.song_id === SongSvc.selectedSong._id) {
+            SongSvc.selectedSong.lyrics.filter((line) => line._id === data.line_id).forEach((line) => line.editor=false);
             $scope.$apply();
         }
     })
@@ -58,7 +69,8 @@ SongController.prototype = {
         else {
             this.websocketSvc.send("line.update", {
                 song_id: this.songSvc.selectedSong._id,
-                line: line
+                line: line,
+                username: this.userSvc.currentUser
             })
         }
     },

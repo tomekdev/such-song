@@ -66,6 +66,10 @@ router.put('/line/:lineId', function (req, res, next) {
                 });
             });
         }
+        websockets.broadcast('line.save', {
+            song_id: req.params.songId,
+            line_id: req.params.lineId
+        }, req.auth);
         res.status(200).json(line)
     });
 })
