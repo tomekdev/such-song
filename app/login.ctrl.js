@@ -9,7 +9,7 @@ LoginCtrl.prototype = {
         var that = this;
         this.userSvc.login(username, password)
             .then(function (user) {
-                that.websocketSvc.connect();
+                that.websocketSvc.connect(that.userSvc.token);
                 that.flags.loginBusy = false;
                 that.$location.path('/')
             })

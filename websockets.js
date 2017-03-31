@@ -1,5 +1,7 @@
 var _ = require('lodash')
 var ws = require('ws')
+var jwt    = require('jwt-simple')
+var config = require('./config')
 
 var clients = []
 
@@ -8,6 +10,8 @@ exports.connect = function (server) {
         server: server
     })
     wss.on('connection', function (ws) {
+        var token = ws.upgradeReq.url.substr(1);
+        ws.username = jwt.decode(token, config.secret).username;
         clients.push(ws)
         ws.on('close', function () {
             _.remove(clients, ws)
