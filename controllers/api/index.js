@@ -15,7 +15,6 @@ router.use(function(req, res, next) {
     }
 });
 
-router.use(require('./songs'))
 router.use(require('./groups'))
 
 module.exports = router
