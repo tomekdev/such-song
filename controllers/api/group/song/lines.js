@@ -1,12 +1,10 @@
 var router = require('express').Router({
     mergeParams: true
 })
-var bodyParser = require('body-parser')
-var Line = require('../../../models/line')
-var Song = require('../../../models/song')
-var websockets = require('../../../websockets')
+var Line = require('../../../../models/line')
+var Song = require('../../../../models/song')
+var websockets = require('../../../../websockets')
 
-router.use(bodyParser.json())
 
 router.post('/lines', function (req, res, next) {
     var line = new Line({
