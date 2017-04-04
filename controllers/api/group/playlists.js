@@ -17,6 +17,48 @@ router.get('/playlist/:playlistId', function (req, res, next) {
         })
 })
 
+router.get('/playlist/:playlistId', function (req, res, next) {
+    Playlist.findById(req.params.playlistId)
+        .populate("songs")
+        .exec(function (err, playlist) {
+            if (err) {
+                return next(err)
+            }
+            res.json(playlist)
+        })
+})
+
+router.put('/playlist/:playlistId', function (req, res, next) {
+    Playlist.findById(req.params.playlistId)
+        .exec(function (err, playlist) {
+            if (err) {
+                return next(err)
+            }
+            playlist.name = req.body.name;
+            playlist.save(function (err, playlist) {
+                if (err) {
+                    return next(err)
+                }
+                res.json(playlist)
+            })
+        })
+})
+
+router.delete('/playlist/:playlistId', function (req, res, next) {
+    Playlist.findById(req.params.playlistId)
+        .exec(function (err, playlist) {
+            if (err) {
+                return next(err)
+            }
+            playlist.remove(function (err) {
+                if (err) {
+                    return next(err)
+                }
+                res.status(200).end();
+            })
+        })
+})
+
 router.get('/playlists', function (req, res, next) {
     Group.findById(req.params.groupId)
         .populate('playlists')
