@@ -30,6 +30,39 @@ router.get('/song/:songId', function (req, res, next) {
         })
 })
 
+
+router.put('/song/:songId', function (req, res, next) {
+    Song.findById(req.params.songId)
+        .exec(function (err, song) {
+            if (err) {
+                return next(err)
+            }
+            song.name = req.body.name;
+            song.author = req.body.author;
+            song.save(function (err, song) {
+                if (err) {
+                    return next(err)
+                }
+                res.json(song)
+            })
+        })
+})
+
+router.delete('/song/:songId', function (req, res, next) {
+    Song.findById(req.params.songId)
+        .exec(function (err, song) {
+            if (err) {
+                return next(err)
+            }
+            song.remove(function (err) {
+                if (err) {
+                    return next(err)
+                }
+                res.status(200).end();
+            })
+        })
+})
+
 router.post('/songs', function (req, res, next) {
     var song = new Song({
         name: req.body.name,
