@@ -124,7 +124,27 @@ router.post('/playlist/:playlistId/songs', function (req, res, next) {
                 if (err) {
                     return next(err)
                 }
-                res.status(201).json(data)
+                res.status(201).json(song)
+            });
+        });
+    });
+})
+
+router.delete('/playlist/:playlistId/song/:songId', function (req, res, next) {
+    Playlist.findById(req.params.playlistId, function (err, playlist) {
+        if (err) {
+            return next(err)
+        }
+        Song.findById(req.params.songId, function (err, song) {
+            if (err) {
+                return next(err)
+            }
+            playlist.songs.pull(song);
+            playlist.save(function (err, data) {
+                if (err) {
+                    return next(err)
+                }
+                res.status(200).end()
             });
         });
     });
