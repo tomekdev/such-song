@@ -1,6 +1,7 @@
 function LoginCtrl($scope, $location, UserSvc, WebsocketSvc) {
 
     this.login = function(username, password) {
+        this.loginError = null;
         UserSvc.login(username, password)
             .then((user)  => {
                 WebsocketSvc.connect(UserSvc.token);
@@ -9,6 +10,7 @@ function LoginCtrl($scope, $location, UserSvc, WebsocketSvc) {
                 $scope.$emit("login");
             }, () => {
                 this.flags.loginBusy = false;
+                this.loginError = "Bad username or password";
         })
     }
 }

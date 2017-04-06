@@ -21,6 +21,10 @@ var group = db.model('group', {
         type: db.Schema.Types.ObjectId,
         ref: 'playlist'
     }],
+    members: [{
+        type: db.Schema.Types.ObjectId,
+        ref: 'user'
+    }],
     memberRequests: [{
         type: db.Schema.Types.ObjectId,
         ref: 'user'

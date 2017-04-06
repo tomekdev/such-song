@@ -1,7 +1,8 @@
-function SongController($scope, SongSvc, LineSvc, UserSvc, WebsocketSvc) {
+function SongController($scope, SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc) {
     this.songSvc = SongSvc;
     this.userSvc = UserSvc;
     this.lineSvc = LineSvc;
+    this.groupSvc = GroupSvc;
     this.websocketSvc = WebsocketSvc;
     
     WebsocketSvc.subscribe("line.add", (data) => {
@@ -52,7 +53,7 @@ SongController.prototype = {
             document.getElementById("line_" + iPosition).focus();
         }, 100)
         this.songSvc.selectedSong.lyrics.splice(iPosition, 0, line);
-        this.lineSvc.add(this.songSvc.selectedSong._id, {
+        this.lineSvc.add(this.groupSvc.currentGroup, this.songSvc.selectedSong._id, {
                 position: iPosition
             })
             .then(function (response) {
@@ -76,14 +77,14 @@ SongController.prototype = {
     },
     
     updateLine: function (line) {
-        this.lineSvc.update(this.songSvc.selectedSong._id, line)
+        this.lineSvc.update(this.groupSvc.currentGroup, this.songSvc.selectedSong._id, line)
             .then(function (response) {
                 line.dirty = false;
             })
     },
 
     deleteLine: function (line, iPosition) {
-        this.lineSvc.delete(this.songSvc.selectedSong._id, line)
+        this.lineSvc.delete(this.groupSvc.currentGroup, this.songSvc.selectedSong._id, line)
             .then((response) => {
                 this.songSvc.selectedSong.lyrics.splice(iPosition, 1);
             })

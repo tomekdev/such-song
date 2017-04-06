@@ -15,8 +15,11 @@ angular.module('app')
             .when('/song', {
                 templateUrl: '/views/song.html'
             })
+            .when('/groups', {
+                templateUrl: '/views/groups.html'
+            })
             .otherwise({
-                redirectTo: '/ijhokl'
+                redirectTo: '/error404'
             });
     }).run(function(UserSvc, $rootScope, $location){
 

@@ -15,7 +15,15 @@ var user = db.model('user', {
     groups: [{
         type: db.Schema.Types.ObjectId,
         ref: 'group'
-    }]
+    }],
+    memberRequests: [{
+        type: db.Schema.Types.ObjectId,
+        ref: 'group'
+    }],
+    lastGroup: {
+        type: db.Schema.Types.ObjectId,
+        ref: 'group'
+    }
 
 })
 

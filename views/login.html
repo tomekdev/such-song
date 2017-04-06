@@ -6,16 +6,19 @@
             </md-card-title-text>
         </md-card-title>
         <md-card-content>
-            <form ng-submit="ctrl.login(username, password); ctrl.flags.loginBusy=true" layout="column" layout-align="stretch center">
+            <form name="loginForm" ng-submit="ctrl.login(username, password); ctrl.flags.loginBusy=true" layout="column" layout-align="stretch center">
                 <md-input-container>
                     <label>Username</label>
-                    <input ng-model="username" ng-disabled="ctrl.flags.loginBusy">
+                    <input ng-model="username" name="username" ng-disabled="ctrl.flags.loginBusy" required autofocus>
                 </md-input-container>
 
                 <md-input-container>
                     <label>Password</label>
-                    <input ng-model="password" type="password" ng-disabled="ctrl.flags.loginBusy">
+                    <input ng-model="password" name="password" type="password" ng-disabled="ctrl.flags.loginBusy" required>
                 </md-input-container>
+                <div layout="row" layout-align="center center" ng-show="!!ctrl.loginError">
+                    <span md-colors="{color:'red'}">{{ctrl.loginError}}</span>
+                </div>
                 <div layout="row" layout-align="center center" ng-show="ctrl.flags.loginBusy">
                     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
                 </div>

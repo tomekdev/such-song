@@ -32,13 +32,16 @@
     <!--    <link rel="shortcut icon" href="favicon.ico">-->
 
     <title>Such song</title>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.3/angular-material.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="viewport" content="width=device-width">
 </head>
 
-<body ng-controller='ApplicationCtrl as ctrl' layout="column">
+<body ng-controller='ApplicationCtrl as ctrl' layout="column" ng-cloak>
     <md-toolbar class="md-toolbar-tools">
+        <md-button aria-label="Menu" class="md-icon-button" ng-click="ctrl.flags.showSideNav = true" ng-show="!!ctrl.user" hide-gt-md>
+            <md-icon alt="menu">menu</md-icon>
+        </md-button>
         <h2 flex="" md-truncate="">Such song</h2>
         <div layout="row" layout-align="end center">
             <md-menu>
@@ -55,46 +58,230 @@
                     </md-menu-item>
                 </md-menu-content>
             </md-menu>
-            <md-button aria-label="Menu" class="md-icon-button" ng-click="ctrl.flags.showSideNav = true">
-                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
-                </svg>
-            </md-button>
         </div>
     </md-toolbar>
     <div flex layout="row">
-        <md-sidenav md-component-id="sidenav-left" md-is-locked-open="$mdMedia('gt-md') && ctrl.songs" class="md-whiteframe-4dp" md-is-open="ctrl.flags.showSideNav">
-            <md-list flex>
-                <md-subheader class="md-no-sticky">
-                    <div layout="row" layout-align="space-between center">
-                        Songs
-                        <md-button class="md-fab md-mini" aria-label="add song" ng-click="ctrl.flags.addSong = true" ng-show="!ctrl.flags.addSong && !!ctrl.user">
-                            <md-icon alt="add song">add</md-icon>
+        <md-sidenav md-component-id="sidenav-left" md-is-locked-open="$mdMedia('gt-md') && ctrl.user" class="md-whiteframe-4dp" md-is-open="ctrl.flags.showSideNav">
+            <md-content flex>
+                <md-subheader>
+                    <md-menu layout="column" md-position-mode="target target" md-offset="0 42">
+                        <md-button class="md-primary md-raised" ng-click="$mdMenu.open()">
+                            <md-icon alt="user">group</md-icon>
+                            {{ctrl.currentGroup.name || 'Select a group'}}
                         </md-button>
-                    </div>
-                    <form ng-show="ctrl.flags.addSong  && !!ctrl.user" ng-submit="ctrl.addSong()">
-                        <md-input-container class="md-block" flex-gt-sm>
-                            <label>Name</label>
-                            <input required ng-model="ctrl.newSong.name">
-                        </md-input-container>
-                        <md-input-container class="md-block" flex-gt-sm>
-                            <label>Author</label>
-                            <input ng-model="ctrl.newSong.author">
-                        </md-input-container>
-                        <div layout="row" layout-align="end">
-
-                            <md-button ng-click="ctrl.flags.addSong = false; ctrl.newSong = null">Dismiss</md-button>
-                            <md-button type="submit" class="md-primary md-raised">Save</md-button>
-                        </div>
-                    </form>
+                        <md-menu-content width="4">
+                            <md-menu-item ng-repeat="group in ctrl.groups">
+                                <md-button ng-click="ctrl.selectGroup(group)">
+                                    {{group.name}}
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="ctrl.manageGroups(); ctrl.flags.showSideNav = false">
+                                    Manage groups
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
                 </md-subheader>
-                <md-list>
-                    <md-list-item ng-repeat="song in ctrl.songs" href='/#/song' ng-click="ctrl.selectSong(song); ctrl.flags.showSideNav = false">
-                        <div class="md-list-item-text">
-                            <span>{{song.name}}</span><span ng-if="song.author"> - {{song.author}}</span>
+                <md-divider></md-divider>
+                <section ng-show="!!ctrl.playlists">
+                    <md-subheader class="md-no-sticky" ng-click="ctrl.flags.expandPlaylists = !ctrl.flags.expandPlaylists">
+                        <div layout="row" flex layout-align="start center">
+                            Playlists
+                            <div>
+                                <md-icon alt="expand playlists">{{ctrl.flags.expandPlaylists? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</md-icon>
+                            </div>
                         </div>
-                    </md-list-item>
-                </md-list>
+                        <md-tooltip ng-if="!ctrl.flags.expandPlaylists">Expand all playlists</md-tooltip>
+                    </md-subheader>
+                    <md-list ng-show="ctrl.flags.expandPlaylists" style="position: relative;">
+                        <md-fab-speed-dial md-direction="left" class="md-scale" style="position: absolute; top: -26px; right: 0;">
+                            <md-fab-trigger>
+                                <md-button aria-label="menu" class="md-fab md-mini" ng-show="!ctrl.flags.playlistMode">
+                                    <md-icon>settings</md-icon>
+                                </md-button>
+                            </md-fab-trigger>
+                            <md-fab-actions>
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.flags.playlistMode = 'add'">
+                                    <md-icon>add</md-icon>
+                                </md-button>
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.flags.playlistMode = 'edit'">
+                                    <md-icon>create</md-icon>
+                                </md-button>
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.flags.playlistMode = 'delete'">
+                                    <md-icon>remove</md-icon>
+                                </md-button>
+                            </md-fab-actions>
+                        </md-fab-speed-dial>
+                        <md-button aria-label="menu" class="md-fab md-mini" ng-click="ctrl.flags.playlistMode = null" ng-show="!!ctrl.flags.playlistMode" style="position: absolute; top: -26px; right: 0; z-index: 10;">
+                            <md-icon>clear</md-icon>
+                        </md-button>
+                        <md-list-item ng-show="ctrl.flags.playlistMode === 'add'">
+                            <form flex ng-submit="ctrl.addPlaylist(playlist)">
+                                <md-input-container class="md-block" flex>
+                                    <label>Name</label>
+                                    <input required ng-model="playlist.name">
+                                </md-input-container>
+                                <div layout="row" layout-align="end">
+                                    <md-button type="submit" class="md-primary md-raised">Add</md-button>
+                                </div>
+                                <md-divider></md-divider>
+                            </form>
+                        </md-list-item>
+                        <md-list-item ng-click="ctrl.selectPlaylist()">
+                            <div layout="row" flex layout-align="space-between center" class="md-list-item-text">
+                                All songs
+                            </div>
+                        </md-list-item>
+                        <md-list-item ng-repeat="playlist in ctrl.playlists" ng-click="ctrl.selectPlaylist(playlist)">
+                            <div layout="row" flex layout-align="space-between center" class="md-list-item-text" ng-show="ctrl.flags.playlistMode !== 'edit'">
+                                {{playlist.name}}
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-show="ctrl.flags.playlistMode === 'delete'" ng-click="ctrl.deletePlaylist(playlist)">
+                                    <md-icon>remove</md-icon>
+                                </md-button>
+                            </div>
+                            <div flex class="md-list-item-text" ng-show="ctrl.flags.playlistMode === 'edit'">
+                                <form ng-submit="updatePlaylist(playlist)" layout="row" flex layout-align="space-between center">
+                                    <md-input-container class="md-block" flex>
+                                        <input required ng-model="playlist.name">
+                                    </md-input-container>
+                                    <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.updatePlaylist(playlist)">
+                                        <md-icon>save</md-icon>
+                                    </md-button>
+                                </form>
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </section>
+                <md-divider></md-divider>
+                <section ng-show="!!ctrl.songs">
+                    <md-subheader class="md-no-sticky" ng-click="ctrl.flags.expandSongs = !ctrl.flags.expandSongs">
+                        <div layout="row" flex layout-align="start center">
+                            Songs
+                            <div>
+                                <md-icon alt="expand songs">{{ctrl.flags.expandSongs? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</md-icon>
+                            </div>
+                        </div>
+                        <md-tooltip ng-if="!ctrl.flags.expandSongs">Expand all songs</md-tooltip>
+                    </md-subheader>
+                    <md-list ng-show="ctrl.flags.expandSongs" style="position: relative;">
+                        <md-fab-speed-dial md-direction="left" class="md-scale" style="position: absolute; top: -26px; right: 0;">
+                            <md-fab-trigger>
+                                <md-button aria-label="menu" class="md-fab md-mini" ng-show="!ctrl.flags.songMode">
+                                    <md-icon>settings</md-icon>
+                                </md-button>
+                            </md-fab-trigger>
+                            <md-fab-actions>
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.flags.songMode = 'add'">
+                                    <md-icon>add</md-icon>
+                                </md-button>
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.flags.songMode = 'edit'">
+                                    <md-icon>create</md-icon>
+                                </md-button>
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.flags.songMode = 'delete'">
+                                    <md-icon>remove</md-icon>
+                                </md-button>
+                            </md-fab-actions>
+                        </md-fab-speed-dial>
+                        <md-button aria-label="menu" class="md-fab md-mini" ng-click="ctrl.flags.songMode = null" ng-show="!!ctrl.flags.songMode" style="position: absolute; top: -26px; right: 0; z-index: 10;">
+                            <md-icon>clear</md-icon>
+                        </md-button>
+                        <md-list-item ng-show="ctrl.flags.songMode === 'add'">
+                            <form flex ng-submit="ctrl.addSong(ctrl.song)">
+                                Add a new song
+                                <md-input-container class="md-block" flex>
+                                    <label>Name</label>
+                                    <input ng-model="ctrl.song.name">
+                                </md-input-container>
+                                <md-input-container class="md-block" flex>
+                                    <label>Author</label>
+                                    <input ng-model="ctrl.song.author">
+                                </md-input-container>
+                                <span ng-if="!!ctrl.currentPlaylist">or chose an existing song</span>
+                                <md-select ng-if="!!ctrl.currentPlaylist" ng-model="ctrl.song._id" md-on-close="songSearchTerm = null">
+                                    <md-select-header layout="column" layout-align="space-between stretch">
+                                        <input class="md-text" type="search" ng-model="songSearchTerm" ng-keydown="$event.stopPropagation()" placeholder="Filter songs" style="margin: .5rem 1rem; border: none; outline: none;">
+                                    </md-select-header>
+                                    <md-option ng-value="song._id" ng-repeat="song in ctrl.allSongs |filter:songSearchTerm">{{song.name}} {{song.author || ''}}</md-option>
+                                </md-select>
+                                <div layout="row" layout-align="end">
+                                    <md-button type="submit" class="md-primary md-raised">Add</md-button>
+                                </div>
+                                <md-divider></md-divider>
+                            </form>
+                        </md-list-item>
+                        <md-list-item ng-repeat="song in ctrl.songs" ng-click="ctrl.selectSong(song); ctrl.flags.showSideNav = false">
+                            <div layout="row" flex layout-align="space-between center" class="md-list-item-text" ng-show="ctrl.flags.songMode !== 'edit'">
+                                <span>{{song.name}}<span ng-if="song.author"> - {{song.author}}</span></span>
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-show="ctrl.flags.songMode === 'delete'" ng-click="ctrl.deleteSong(song)">
+                                    <md-icon>remove</md-icon>
+                                </md-button>
+                            </div>
+                            <div flex class="md-list-item-text" ng-show="ctrl.flags.songMode === 'edit'">
+                                <form ng-submit="updateSong(song)" layout="column" flex>
+                                    <md-input-container class="md-block" flex>
+                                        <input required ng-model="song.name">
+                                    </md-input-container>
+                                    <md-input-container class="md-block" flex>
+                                        <input required ng-model="song.author">
+                                    </md-input-container>
+                                    <div layout="row" layout-align="end">
+                                        <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.updateSong(song)">
+                                            <md-icon>save</md-icon>
+                                        </md-button>
+                                    </div>
+                                </form>
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </section>
+                <!--<section ng-show="!!ctrl.songs">
+                    <md-subheader>
+                        <div layout="row" flex layout-align="space-between center" ng-click="ctrl.flags.expandSongs = !ctrl.flags.expandSongs">
+                            Songs
+                            <md-button class="md-icon-button md-mini" aria-label="add song" ng-click="ctrl.flags.addSong = true" ng-show="!ctrl.flags.addSong && !!ctrl.user">
+                                <md-icon alt="add song">add</md-icon>
+                            </md-button>
+                        </div>
+                        <form ng-show="ctrl.flags.addSong  && !!ctrl.user" ng-submit="ctrl.addSong()">
+                            <md-input-container class="md-block" flex-gt-sm>
+                                <label>Name</label>
+                                <input required ng-model="ctrl.newSong.name">
+                            </md-input-container>
+                            <md-input-container class="md-block" flex-gt-sm>
+                                <label>Author</label>
+                                <input ng-model="ctrl.newSong.author">
+                            </md-input-container>
+                            <div layout="row" layout-align="end">
+
+                                <md-button ng-click="ctrl.flags.addSong = false; ctrl.newSong = null">Dismiss</md-button>
+                                <md-button type="submit" class="md-primary md-raised">Save</md-button>
+                            </div>
+                        </form>
+                    </md-subheader>
+                    <md-subheader class="md-no-sticky" ng-click="ctrl.flags.expandSongs = !ctrl.flags.expandSongs">
+                        <div layout="row" flex layout-align="space-between center">
+                            Songs
+                            <div>
+                                <md-icon alt="expand playlists">{{ctrl.flags.expandSongs? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</md-icon>
+                            </div>
+                        </div>
+                        <md-tooltip ng-if="!ctrl.flags.expandSongs">Expand all songs</md-tooltip>
+                    </md-subheader>
+                    <md-list ng-show="ctrl.flags.expandSongs">
+                        <div layout="row" flex layout-align="end start">
+                            <md-button class="md-icon-button md-mini" aria-label="add song" ng-click="ctrl.flags.addSong = true" ng-show="!ctrl.flags.addSong && !!ctrl.user">
+                                <md-icon alt="settings">settings</md-icon>
+                            </md-button>
+                        </div>
+                        <md-list-item ng-repeat="song in ctrl.songs" href='/#/song' ng-click="ctrl.selectSong(song); ctrl.flags.showSideNav = false">
+                            <div class="md-list-item-text">
+                                <span>{{song.name}}</span><span ng-if="song.author"> - {{song.author}}</span>
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </section>-->
+            </md-content>
         </md-sidenav>
         <md-content flex layout="column" id="content">
             <div class="container" layout="column" flex ng-view></div>
@@ -106,7 +293,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.3/angular-material.min.js"></script>
     <script src="app.js"></script>
 </body>
 

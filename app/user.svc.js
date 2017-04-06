@@ -15,6 +15,21 @@ function UserSvc($http) {
     this.logout = function () {
         this.currentUser = null;
     }
+    
+    this.getUserInfo = function (group) {
+        return $http.get('/api/user')
+            .then((response) => {
+            return response.data; //svc.getUser()
+        })
+    }
+    
+    this.setLastGroup = function (group) {
+        return $http.put('/api/user', {
+            lastGroup: group._id
+        }).then((response) => {
+            return true; //svc.getUser()
+        })
+    }
 }
 
 angular.module('app')

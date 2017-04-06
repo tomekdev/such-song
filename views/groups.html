@@ -1,0 +1,123 @@
+<div flex layout="row" layout-align="center center" ng-controller="GroupCtrl as ctrl">
+    <md-card flex-gt-md="50">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline">Groups</span>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-content layout="row">
+            <md-content flex>
+                <section ng-show="ctrl.userGroups.length > 0">
+                    <md-subheader class="md-no-sticky">
+                        My groups
+                    </md-subheader>
+                    <md-divider></md-divider>
+                    <md-list style="position: relative;">
+                        <md-fab-speed-dial md-direction="left" class="md-scale" style="position: absolute; top: -26px; right: 0;">
+                            <md-fab-trigger>
+                                <md-button aria-label="menu" class="md-fab md-mini" ng-show="!ctrl.flags.groupMode">
+                                    <md-icon>settings</md-icon>
+                                </md-button>
+                            </md-fab-trigger>
+                            <md-fab-actions>
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.flags.groupMode = 'add'">
+                                    <md-icon>add</md-icon>
+                                </md-button>
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.flags.groupMode = 'edit'">
+                                    <md-icon>create</md-icon>
+                                </md-button>
+                                <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.flags.groupMode = 'delete'">
+                                    <md-icon>remove</md-icon>
+                                </md-button>
+                            </md-fab-actions>
+                        </md-fab-speed-dial>
+                        <md-button aria-label="menu" class="md-fab md-mini" ng-click="ctrl.flags.groupMode = null" ng-show="!!ctrl.flags.groupMode" style="position: absolute; top: -26px; right: 0; z-index: 10;">
+                            <md-icon>clear</md-icon>
+                        </md-button>
+                        <md-list-item ng-show="ctrl.flags.groupMode === 'add'">
+                            <form flex ng-submit="ctrl.addGroup(ctrl.group)">
+                                <md-input-container class="md-block" flex>
+                                    <label>Name</label>
+                                    <input required ng-model="ctrl.group.name">
+                                </md-input-container>
+                                <div layout="row" layout-align="end">
+                                    <md-button type="submit" class="md-primary md-raised">Add</md-button>
+                                </div>
+                                <md-divider></md-divider>
+                            </form>
+                        </md-list-item>
+                        <div ng-repeat="group in ctrl.userGroups">
+                            <md-list-item ng-click="group.expanded = !group.expanded">
+                                <div layout="row" flex layout-align="space-between center" class="md-list-item-text" ng-show="ctrl.flags.groupMode !== 'edit'">
+                                    <div layout="row" layout-align="start">
+                                        {{group.name}}<md-icon alt="expand group">{{group.expanded? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</md-icon>
+                                    </div>
+                                    <md-button aria-label="menu" class="md-mini" ng-show="ctrl.flags.groupMode === 'delete'" ng-click="ctrl.deleteGroup(group)">
+                                        Leave
+                                    </md-button>
+                                </div>
+                                <div flex class="md-list-item-text" ng-show="ctrl.flags.groupMode === 'edit'">
+                                    <form ng-submit="updateGroup(group)" layout="row" flex layout-align="space-between center">
+                                        <md-input-container class="md-block" flex>
+                                            <input required ng-model="group.name">
+                                        </md-input-container>
+                                        <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.updateGroup(group)">
+                                            <md-icon>save</md-icon>
+                                        </md-button>
+                                    </form>
+                                </div>
+                            </md-list-item>
+                            <md-list-item ng-show="group.expanded && !ctrl.flags.groupMode">
+                                <md-divider></md-divider>
+                                <md-list flex>
+                                    <md-list-item ng-repeat="memberRequest in group.memberRequests" layout="row" layout-align="space-between center">
+                                        <div flex>{{memberRequest.username}}</div>
+                                        <div>
+                                            <md-button aria-label="accept" class="md-icon-button md-mini" ng-click="ctrl.acceptMember(group, memberRequest, false)">
+                                                <md-icon>clear</md-icon>
+                                            </md-button>
+                                            <md-button aria-label="accept" class="md-icon-button md-mini" ng-click="ctrl.acceptMember(group, memberRequest, true)">
+                                                <md-icon>done</md-icon>
+                                            </md-button>
+                                        </div>
+                                    </md-list-item>
+                                </md-list>
+                            </md-list-item>
+                        </div>
+                    </md-list>
+                </section>
+                <md-divider></md-divider>
+                <section ng-show="ctrl.userSuggested.length > 0">
+                    <md-subheader class="md-no-sticky">
+                        Join new groups
+                    </md-subheader>
+                    <md-divider></md-divider>
+                    <md-list style="position: relative;">
+                        <md-list-item ng-repeat="group in ctrl.userSuggested">
+                            <div layout="row" flex layout-align="space-between center" class="md-list-item-text">
+                                {{group.name}}
+                                <md-button aria-label="menu" class="md-primary md-raised" ng-disabled="group.requested" ng-click="ctrl.requestGroup(group)">
+                                    Join
+                                </md-button>
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </section>
+                <md-divider></md-divider>
+                <section ng-show="ctrl.userMemberRequests.length > 0">
+                    <md-subheader class="md-no-sticky">
+                        My membership requests
+                    </md-subheader>
+                    <md-divider></md-divider>
+                    <md-list style="position: relative;">
+                        <md-list-item ng-repeat="group in ctrl.userMemberRequests">
+                            <div layout="row" flex layout-align="space-between center" class="md-list-item-text">
+                                {{group.name}}
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </section>
+            </md-content>
+        </md-card-content>
+    </md-card>
+</div>
