@@ -73,13 +73,17 @@ router.post('/members', function (req, res, next) {
             }
             
             user.memberRequests.pull(group);
-            user.groups.push(group);
+            if (req.body.accept) {
+                user.groups.push(group);
+            }
             user.save(function(err, user) {
                 if (err) {
                     return next(err)
                 }
                 group.memberRequests.pull(user);
-                group.members.push(user);
+                if (req.body.accept) {
+                    group.members.push(user);
+                }
                 group.save(function(err, group) {
                     if (err) {
                         return next(err)

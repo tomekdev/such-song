@@ -6,7 +6,15 @@ router.get('/groups', function (req, res, next) {
     User.findOne({
         username: req.auth.username
     })
-        .populate('groups')
+        .populate({
+          path: 'groups',
+          model: 'group',
+          populate: {
+            path: 'memberRequests',
+            select: 'username _id',
+            model: 'user'
+          }
+        })
         .exec(function(err, user){
         if (err) {
             return next(err)
@@ -36,7 +44,10 @@ router.get('/suggestedgroups', function (req, res, next) {
         if (err) {
             return next(err)
         }
-        Group.find( { _id: { $nin: user.groups } })
+        Group.find({$and:[
+            { _id: { $nin: user.groups } },
+            { _id: { $nin: user.memberRequests } }
+        ]})
             .exec(function (err, groups) {
                 if (err) {
                     return next(err)
