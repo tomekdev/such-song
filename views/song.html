@@ -13,9 +13,6 @@
                     <md-button class="md-fab" aria-label="Edit song" ng-show="ctrl.flags.editSong" ng-click="ctrl.saveLines()" style="background-color: seagreen;">
                         <md-icon alt="edit">save</md-icon>
                     </md-button>
-                    <md-button class="md-fab" aria-label="Edit song" ng-show="ctrl.flags.editSong" ng-click="ctrl.dismissLines()" style="background-color: firebrick;">
-                        <md-icon alt="edit">close</md-icon>
-                    </md-button>
                 </div>
             </md-card-title-text>
         </md-card-title>
@@ -29,13 +26,17 @@
         </md-button>
         <div layout="row" flex>
             <md-input-container md-no-float class="md-block" layout-fill>
-                <input ng-model="line.text" ng-disabled="!ctrl.flags.editSong" ng-focus="active = true; focused = true" ng-blur="active = false" ng-change="line.dirty = true" ng-keyup="$event.keyCode == 13 ? ctrl.addLine(index+1): null; $event.keyCode == 13 ? focused = false: null" id="line_{{$index}}">
+                <input ng-model="line.text" ng-disabled="!ctrl.flags.editSong || !!line.editor" ng-focus="active = true" ng-click="focused = true" ng-blur="active = false; ctrl.updateLine(line)" ng-change="line.dirty = true" ng-keyup="ctrl.changeLine($event, line, index); $event.keyCode == 13 ? focused = false: null" id="line_{{$index}}">
             </md-input-container>
             <md-button class="md-fab md-mini md-warn" aria-label="Add line" ng-show="ctrl.flags.editSong && line.dirty" ng-click="ctrl.updateLine(line)" style="background-color: seagreen;">
                 <md-icon alt="edit">save</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini md-warn" aria-label="Add line" ng-show="ctrl.flags.editSong" ng-click="deleteLine(line, index)" style="background-color: firebrick;">
+            <md-button class="md-fab md-mini md-warn" aria-label="Delete line" ng-show="ctrl.flags.editSong && !line.editor" ng-click="ctrl.deleteLine(line, index)" style="background-color: firebrick;">
                 <md-icon alt="edit">delete</md-icon>
+            </md-button>
+            <md-button class="md-fab md-mini md-warn" aria-label="Locked line" ng-show="!!line.editor"  style="background-color: tomato;" disabled>
+                <md-tooltip>Edited by {{line.editor}}</md-tooltip>
+                <md-icon alt="edit">lock</md-icon>
             </md-button>
         </div>
         <md-button class="md-fab md-mini" aria-label="Add line" ng-show="focused && ctrl.flags.editSong" ng-click="focused = false; ctrl.addLine(index+1)">

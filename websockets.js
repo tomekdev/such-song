@@ -1,5 +1,7 @@
 var _ = require('lodash')
 var ws = require('ws')
+var jwt    = require('jwt-simple')
+var config = require('./config')
 
 var clients = []
 
@@ -8,6 +10,8 @@ exports.connect = function (server) {
         server: server
     })
     wss.on('connection', function (ws) {
+        var token = ws.upgradeReq.url.substr(1);
+        ws.auth = jwt.decode(token, config.secret);
         clients.push(ws)
         ws.on('close', function () {
             _.remove(clients, ws)
@@ -22,9 +26,11 @@ exports.connect = function (server) {
     })
 }
 
-exports.broadcast = function (topic, data) {
-    var json = JSON.stringify(data)
+exports.broadcast = function (event, data, sender) {
+    var json = JSON.stringify({event: event, data: data})
     clients.forEach(function (client) {
-        client.send(json)
+        if (!sender || client.auth.username !== sender.username || client.auth.timestamp !== sender.timestamp) {
+            client.send(json)
+        }
     })
 }

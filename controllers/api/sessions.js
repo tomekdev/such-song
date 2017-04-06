@@ -14,7 +14,7 @@ router.post('/sessions', function (req, res, next) {
     bcrypt.compare(req.body.password, user.password, function (err, valid) {
       if (err) { return next(err) }
       if (!valid) { return res.sendStatus(401) }
-      var token = jwt.encode({username: username}, config.secret)
+      var token = jwt.encode({username: username, timestamp: Date.now()}, config.secret)
       res.send(token)
     })
   })

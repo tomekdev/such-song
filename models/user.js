@@ -1,6 +1,31 @@
 var db = require('../db')
-var user = db.Schema({
-  username: { type: String, required: true },
-  password: { type: String, required: true, select: false }
+require('./group')
+
+var user = db.model('user', {
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true,
+        select: false
+    },
+    groups: [{
+        type: db.Schema.Types.ObjectId,
+        ref: 'group'
+    }],
+    memberRequests: [{
+        type: db.Schema.Types.ObjectId,
+        ref: 'group'
+    }],
+    lastGroup: {
+        type: db.Schema.Types.ObjectId,
+        ref: 'group'
+    }
+
 })
-module.exports = db.model('User', user)
+
+module.exports = user
+

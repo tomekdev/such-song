@@ -1,24 +1,21 @@
 var db = require('../db')
-require('./line')
+require('./song')
 
-var song = db.model('song', {
+var playlist = db.model('playlist', {
     name: {
         type: String,
         required: true
-    },
-    author: {
-        type: String,
     },
     added: {
         type: Date,
         required: true,
         default: Date.now
     },
-    lyrics: [{
+    songs: [{
         type: db.Schema.Types.ObjectId,
-        ref: 'line'
+        ref: 'song'
     }]
 
 })
 
-module.exports = song
+module.exports = playlist

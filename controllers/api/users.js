@@ -27,4 +27,16 @@ router.post('/users', function (req, res, next) {
   })
 })
 
+
+router.use(function(req, res, next) {
+  if (!req.auth) {
+      res.sendStatus(401);
+  }
+    else {
+        next();
+    }
+});
+
+router.use('/user', require('./user'))
+
 module.exports = router

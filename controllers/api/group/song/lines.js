@@ -1,11 +1,10 @@
 var router = require('express').Router({
     mergeParams: true
 })
-var bodyParser = require('body-parser')
-var Line = require('../../../models/line')
-var Song = require('../../../models/song')
+var Line = require('../../../../models/line')
+var Song = require('../../../../models/song')
+var websockets = require('../../../../websockets')
 
-router.use(bodyParser.json())
 
 router.post('/lines', function (req, res, next) {
     var line = new Line({
@@ -15,18 +14,24 @@ router.post('/lines', function (req, res, next) {
         if (err) {
             return next(err)
         }
-        line.save(function (err, post) {
+        line.save(function (err, data) {
             if (err) {
                 return next(err)
             }
-            song.lyrics.splice(req.body.position || song.lyrics.length, 0, line);
-            song.save(function (err, post) {
+            var iPosition = req.body.position !== undefined? req.body.position : song.lyrics.length;
+            song.lyrics.splice(iPosition, 0, line);
+            song.save(function (err, data) {
                 if (err) {
                     line.remove();
                     return next(err)
                 }
             })
-            res.status(201).json(post)
+            websockets.broadcast('line.add', {
+                song_id: req.params.songId,
+                position: iPosition,
+                line: line
+            }, req.auth);
+            res.status(201).json(data)
         })
 
     });
@@ -59,6 +64,10 @@ router.put('/line/:lineId', function (req, res, next) {
                 });
             });
         }
+        websockets.broadcast('line.save', {
+            song_id: req.params.songId,
+            line_id: req.params.lineId
+        }, req.auth);
         res.status(200).json(line)
     });
 })
@@ -81,6 +90,10 @@ router.delete('/line/:lineId', function (req, res, next) {
                     if (err) {
                         return next(err)
                     }
+                    websockets.broadcast('line.delete', {
+                        song_id: req.params.songId,
+                        line_id: req.params.lineId
+                    }, req.auth);
                     res.status(200).json(line)
                 });
             });

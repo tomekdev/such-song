@@ -4,14 +4,16 @@ function WebsocketSvc($window) {
 }
 
 WebsocketSvc.prototype = {
-    connect: function () {
+    connect: function (token) {
         var that = this;
         var host
         if (this.$window.location.protocol === "https:") {
-            host = "wss://" + this.$window.location.host
+            host = "wss://"
         } else {
-            host = "ws://" + this.$window.location.host
+            host = "ws://"
         }
+        host += this.$window.location.host;
+        host += "/" + token
         this.connection = new WebSocket(host);
         this.connection.onmessage = function (e) {
             var input = JSON.parse(e.data),
@@ -21,7 +23,9 @@ WebsocketSvc.prototype = {
                 callback(data);
             });
         }
-
+        this.connection.onclose = function (e) {
+            console.log("Connection closed")
+        }
     },
     send: function (event, data) {
         this.connection.send(JSON.stringify({
