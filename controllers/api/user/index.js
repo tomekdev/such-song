@@ -2,6 +2,38 @@ var router = require('express').Router({mergeParams: true})
 var Group = require('../../../models/group')
 var User   = require('../../../models/user')
 
+router.get('/', function (req, res, next) {
+    User.findOne({
+        username: req.auth.username
+    })
+    .select('lastGroup')
+    .populate('lastGroup')
+    .exec(function(err, user){
+        if (err) {
+            return next(err)
+        }
+        res.json(user);
+    })
+})
+
+router.put('/', function (req, res, next) {
+    User.findOne({
+        username: req.auth.username
+    })
+        .exec(function(err, user){
+        if (err) {
+            return next(err)
+        }
+        user.lastGroup = req.body.lastGroup;
+        user.save(function(err, user) {
+            if (err) {
+                return next(err)
+            }
+            res.status(200).end();
+        })
+    })
+})
+
 router.get('/groups', function (req, res, next) {
     User.findOne({
         username: req.auth.username
