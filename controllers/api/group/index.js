@@ -17,12 +17,11 @@ router.post('/memberrequests', function (req, res, next) {
                     return next(err)
                 }
                 user.memberRequests.push(group);
-                user.save()
-                .then((err, user) => {
+                user.save((err, user) => {
                     if (err) {
                         return next(err)
                     }
-                    res.sendStatus(201);
+                    res.status(201).end();
                 })
             })
         })
@@ -42,7 +41,7 @@ router.use(function(req, res, next) {
             next();
         }
         else {
-            res.sendStatus(401);
+            res.status(401).end();
         }
     })
 });
@@ -85,7 +84,7 @@ router.post('/members', function (req, res, next) {
                     if (err) {
                         return next(err)
                     }
-                    res.sendStatus(201);
+                    res.status(201).end();
                 })
             })
         })
