@@ -12,11 +12,18 @@ router.post('/memberrequests', function (req, res, next) {
                 return next(err)
             }
             group.memberRequests.push(user);
-            group.save(function(err, user){
+            group.save(function(err, group){
                 if (err) {
                     return next(err)
                 }
-                res.sendStatus(201);
+                user.memberRequests.push(group);
+                user.save()
+                .then((err, user) => {
+                    if (err) {
+                        return next(err)
+                    }
+                    res.sendStatus(201);
+                })
             })
         })
     })
@@ -66,12 +73,14 @@ router.post('/members', function (req, res, next) {
                 return next(err)
             }
             
+            user.memberRequests.pull(group);
             user.groups.push(group);
             user.save(function(err, user) {
                 if (err) {
                     return next(err)
                 }
                 group.memberRequests.pull(user);
+                group.members.push(user);
                 group.save(function(err, group) {
                     if (err) {
                         return next(err)
