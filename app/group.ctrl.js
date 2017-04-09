@@ -74,7 +74,7 @@ GroupCtrl.prototype = {
         return this.groupSvc.userGroups;
     },
     
-    set userSongs(userSongs) {
+    set userGroups(userGroups) {
         this.groupSvc.userGroups = userGroups;
     },
 }
