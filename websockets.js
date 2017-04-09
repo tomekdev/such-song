@@ -1,9 +1,10 @@
 var _ = require('lodash')
 var ws = require('ws')
-var jwt    = require('jwt-simple')
+var jwt = require('jwt-simple')
 var config = require('./config')
+var User = require('./models/user')
 
-var clients = []
+var groups = []
 
 exports.connect = function (server) {
     var wss = new ws.Server({
@@ -12,16 +13,40 @@ exports.connect = function (server) {
     wss.on('connection', function (ws) {
         var token = ws.upgradeReq.url.substr(1);
         ws.auth = jwt.decode(token, config.secret);
-        clients.push(ws)
+        User.findOne({username: ws.auth.username})
+             .populate('groups')
+             .exec((err, user) => {
+            if (err) {
+                return next(err)
+            }
+            user.groups.forEach((group) => {
+                if (!groups[group.id]) {
+                    groups[group.id] = [];
+                }
+                groups[group.id].push(ws);
+            })
+        });
         ws.on('close', function () {
-            _.remove(clients, ws)
+            groups.forEach( (group) => {
+                _.remove(clients, ws)
+            })
         });
         ws.on("message", function (message) {
-            clients.forEach(function (client) {
-                if (client !== ws) {
-                    client.send(message)
+            var data = JSON.parse(message);
+            User.findOne({username: ws.auth.username, group: data.groupId})
+            .populate('groups')
+            .exec((err, user) => {
+                if (err) {
+                    return next(err)
                 }
-            })
+                if (Array.isArray(groups[data.groupId])) {
+                    groups[data.groupId].forEach(function (client) {
+                        if (client !== ws) {
+                            client.send(message)
+                        }
+                    })
+                }
+            });
         });
     })
 }
@@ -29,13 +54,15 @@ exports.connect = function (server) {
 exports.broadcast = function (group, event, data, sender) {
     var json = JSON.stringify({
         groupId: group,
-        event: event, 
+        event: event,
         data: data,
         sender: sender.username
     })
-    clients.forEach(function (client) {
-        if (!sender || client.auth.username !== sender.username || client.auth.timestamp !== sender.timestamp) {
-            client.send(json)
-        }
-    })
+    if (Array.isArray(groups[group])) {
+        groups[group].forEach(function (client) {
+            if (!sender || client.auth.username !== sender.username || client.auth.timestamp !== sender.timestamp) {
+                client.send(json)
+            }
+        })
+    }
 }

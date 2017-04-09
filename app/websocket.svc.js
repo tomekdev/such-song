@@ -29,10 +29,11 @@ WebsocketSvc.prototype = {
             console.log("Connection closed")
         }
     },
-    send: function (event, data) {
+    send: function (groupId, event, data) {
         this.connection.send(JSON.stringify({
             "event": event,
-            "data": data
+            "data": data,
+            "groupId": groupId
         }));
     },
     subscribe: function (event, callback) {
