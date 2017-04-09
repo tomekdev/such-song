@@ -25,6 +25,7 @@ router.post('/memberrequests', function (req, res, next) {
                     }
                     websockets.broadcast(req.params.groupId, 'group.request.add', {
                         username: user.username,
+                        _id: user._id
                     }, req.auth)
                     res.status(201).end();
                 })
@@ -96,6 +97,8 @@ router.post('/members', function (req, res, next) {
                     websockets.broadcast(req.params.groupId, 'group.member.add', {
                         username: user.username
                     }, req.auth)
+                    websockets.sendToUser(user.username, req.body.accept? 'group.member.accept' : 'group.member.decline', group)
+                    websockets.addUserToGroup(user.username, group._id)
                     res.status(201).end();
                 })
             })

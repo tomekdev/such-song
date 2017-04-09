@@ -65,11 +65,22 @@ function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, Play
     });
     
     WebsocketSvc.subscribe("group.request.add", (groupId, user) => {
+        this.groups.find((item) => item._id === groupId).memberRequests.push(user);
+        $scope.$apply;
         this.showToast(user.username + ' wants to join "' + this.groups.find((item) => item._id === groupId).name +'"');
     });
     
     WebsocketSvc.subscribe("group.member.add", (groupId, user, username) => {
         this.showToast(user.username + ' joined "' + this.groups.find((item) => item._id === groupId).name +'"');
+    });
+    
+    WebsocketSvc.subscribe("group.member.accept", (ignore, group) => {
+        this.groups.push(group);
+        this.showToast('Welcome to ' + group.name);
+    });
+    
+    WebsocketSvc.subscribe("group.member.decline", (ignore, group) => {
+        this.showToast('Your request to join "' + group.name + '" was rejected');
     });
     
     WebsocketSvc.subscribe("song.add", (groupId, song, username) => {
@@ -200,6 +211,13 @@ function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, Play
     
     this.showToast = (message) => {
         $mdToast.show($mdToast.simple().textContent(message).position("bottom right"));
+    }
+    
+    this.acceptMember = (group, user, accept) => {
+        GroupSvc.acceptMember(group, user, accept)
+        .then(() => {
+            group.memberRequests.splice(group.memberRequests.indexOf(user), 1);
+        })
     }
 }
 

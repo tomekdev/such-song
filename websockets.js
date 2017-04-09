@@ -5,6 +5,7 @@ var config = require('./config')
 var User = require('./models/user')
 
 var groups = []
+var clients = []
 
 exports.connect = function (server) {
     var wss = new ws.Server({
@@ -25,11 +26,13 @@ exports.connect = function (server) {
                 }
                 groups[group.id].push(ws);
             })
+            clients.push(ws);
         });
         ws.on('close', function () {
             groups.forEach( (group) => {
-                _.remove(clients, ws)
+                _.remove(group, ws)
             })
+            _.remove(clients, ws)
         });
         ws.on("message", function (message) {
             var data = JSON.parse(message);
@@ -42,7 +45,7 @@ exports.connect = function (server) {
                 if (Array.isArray(groups[data.groupId])) {
                     groups[data.groupId].forEach(function (client) {
                         if (client !== ws) {
-                            client.send(message)
+                            client.send(message, (error) => {})
                         }
                     })
                 }
@@ -61,8 +64,29 @@ exports.broadcast = function (group, event, data, sender) {
     if (Array.isArray(groups[group])) {
         groups[group].forEach(function (client) {
             if (!sender || client.auth.username !== sender.username || client.auth.timestamp !== sender.timestamp) {
-                client.send(json)
+                client.send(json, (error) => {})
             }
         })
+    }
+}
+
+exports.addUserToGroup = function(username, groupId) {
+    user = clients.find((client) => client.auth.username === username)
+    if (user) {
+        if (!groups[groupId]) {
+            groups[groupId] = [];
+        }
+        groups[groupId].push(user);
+    }
+}
+
+exports.sendToUser = function(username, event, data) {
+    user = clients.find((client) => client.auth.username === username)
+    if (user) {
+        var json = JSON.stringify({
+            event: event,
+            data: data
+        })
+        user.send(json, (error) => {})
     }
 }
