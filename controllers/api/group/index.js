@@ -1,6 +1,8 @@
 var router = require('express').Router({mergeParams: true})
 var User = require('../../../models/user')
 var Group = require('../../../models/group')
+var websockets = require('../../../websockets')
+
 
 router.post('/memberrequests', function (req, res, next) {
     Group.findById(req.params.groupId, function (err, group) {
@@ -23,7 +25,7 @@ router.post('/memberrequests', function (req, res, next) {
                     }
                     websockets.broadcast(req.params.groupId, 'group.request.add', {
                         username: user.username,
-                    })
+                    }, req.auth)
                     res.status(201).end();
                 })
             })
