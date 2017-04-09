@@ -5,14 +5,14 @@ function SongController($scope, SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSv
     this.groupSvc = GroupSvc;
     this.websocketSvc = WebsocketSvc;
     
-    WebsocketSvc.subscribe("line.add", (data) => {
+    WebsocketSvc.subscribe("line.add", (groupId, data) => {
         if (data.song_id === SongSvc.selectedSong._id) {
             SongSvc.selectedSong.lyrics.splice(data.position, 0, data.line);
             $scope.$apply();
         }
     })
     
-    WebsocketSvc.subscribe("line.update", (data) => {
+    WebsocketSvc.subscribe("line.update", (groupId, data) => {
         if (data.song_id === SongSvc.selectedSong._id) {
             SongSvc.selectedSong.lyrics.filter((line) => line._id === data.line._id).forEach((line) => {
                 line.text = data.line.text;
@@ -22,14 +22,14 @@ function SongController($scope, SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSv
         }
     })
     
-    WebsocketSvc.subscribe("line.save", (data) => {
+    WebsocketSvc.subscribe("line.save", (groupId, data) => {
         if (data.song_id === SongSvc.selectedSong._id) {
             SongSvc.selectedSong.lyrics.filter((line) => line._id === data.line._id).forEach((line) => line.editor=false);
             $scope.$apply();
         }
     })
     
-    WebsocketSvc.subscribe("line.delete", (data) => {
+    WebsocketSvc.subscribe("line.delete", (groupId, data) => {
         if (data.song_id === SongSvc.selectedSong._id) {
             SongSvc.selectedSong.lyrics = SongSvc.selectedSong.lyrics.filter((line) => line._id !== data.line._id);
             $scope.$apply();
@@ -68,7 +68,7 @@ SongController.prototype = {
             this.addLine(index+1)
         }
         else {
-            this.websocketSvc.send("line.update", {
+            this.websocketSvc.send(this.groupSvc.currentGroup._id, "line.update", {
                 song_id: this.songSvc.selectedSong._id,
                 line: line,
                 username: this.userSvc.currentUser
