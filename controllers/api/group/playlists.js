@@ -17,17 +17,6 @@ router.get('/playlist/:playlistId', function (req, res, next) {
         })
 })
 
-router.get('/playlist/:playlistId', function (req, res, next) {
-    Playlist.findById(req.params.playlistId)
-        .populate("songs")
-        .exec(function (err, playlist) {
-            if (err) {
-                return next(err)
-            }
-            res.json(playlist)
-        })
-})
-
 router.put('/playlist/:playlistId', function (req, res, next) {
     Playlist.findById(req.params.playlistId)
         .exec(function (err, playlist) {
@@ -39,6 +28,7 @@ router.put('/playlist/:playlistId', function (req, res, next) {
                 if (err) {
                     return next(err)
                 }
+                websockets.broadcast(req.params.groupId, 'playlist.update', playlist, req.auth)
                 res.json(playlist)
             })
         })
@@ -54,6 +44,7 @@ router.delete('/playlist/:playlistId', function (req, res, next) {
                 if (err) {
                     return next(err)
                 }
+                websockets.broadcast(req.params.groupId, 'playlist.delete', playlist, req.auth)
                 res.status(200).end();
             })
         })
@@ -89,10 +80,7 @@ router.post('/playlists', function (req, res, next) {
                     return next(err)
                 }
             })
-            websockets.broadcast('playlist.add', {
-                group_id: req.params.groupId,
-                playlist: playlist
-            }, req.auth);
+            websockets.broadcast(req.params.groupId, 'playlist.add', playlist, req.auth);
             res.status(201).json(data)
         })
 
@@ -124,6 +112,10 @@ router.post('/playlist/:playlistId/songs', function (req, res, next) {
                 if (err) {
                     return next(err)
                 }
+                websockets.broadcast(req.params.groupId, 'playlist.song.add', {
+                    playlist: playlist,
+                    song: song
+                }, req.auth)
                 res.status(201).json(song)
             });
         });
@@ -144,6 +136,10 @@ router.delete('/playlist/:playlistId/song/:songId', function (req, res, next) {
                 if (err) {
                     return next(err)
                 }
+                websockets.broadcast(req.params.groupId, 'playlist.song.delete', {
+                    playlist: playlist,
+                    song: song
+                }, req.auth)
                 res.status(200).end()
             });
         });

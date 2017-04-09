@@ -18,19 +18,22 @@ WebsocketSvc.prototype = {
         this.connection.onmessage = function (e) {
             var input = JSON.parse(e.data),
                 event = input.event,
-                data = input.data;
+                data = input.data,
+                groupId = input.groupId,
+                username = input.sender;
             (that.callbacks[event] || []).forEach(function (callback) {
-                callback(data);
+                callback(groupId, data, username);
             });
         }
         this.connection.onclose = function (e) {
             console.log("Connection closed")
         }
     },
-    send: function (event, data) {
+    send: function (groupId, event, data) {
         this.connection.send(JSON.stringify({
             "event": event,
-            "data": data
+            "data": data,
+            "groupId": groupId
         }));
     },
     subscribe: function (event, callback) {

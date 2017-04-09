@@ -34,6 +34,7 @@
     <title>Such song</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.3/angular-material.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="app.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width">
 </head>
 
@@ -45,9 +46,30 @@
         <h2 flex="" md-truncate="">Such song</h2>
         <div layout="row" layout-align="end center">
             <md-menu>
-                <md-button ng-click="$mdOpenMenu()" ng-show="!!ctrl.user">
+                <md-button class="md-icon-button md-mini" ng-click="$mdOpenMenu()" ng-show="!!ctrl.user">
+                    <md-icon alt="user">mail</md-icon>
+                    <div class="badge">{{ctrl.notifications}}</div>
+                </md-button>
+                <md-menu-content width="4">
+                    <div ng-repeat="group in ctrl.groups">
+                        <md-menu-item ng-repeat="memberRequest in group.memberRequests">
+                                <div>{{memberRequest.username}} wants to join {{group.name}}</div>
+                                <md-button aria-label="accept" class="md-icon-button md-mini" ng-click="ctrl.acceptMember(group, memberRequest, false)">
+                                    <md-icon>clear</md-icon>
+                                </md-button>
+                                <md-button aria-label="accept" class="md-icon-button md-mini" ng-click="ctrl.acceptMember(group, memberRequest, true)">
+                                    <md-icon>done</md-icon>
+                                </md-button>
+                            </div>
+                            </div>
+                        </md-menu-item>
+                    </div>
+                </md-menu-content>
+            </md-menu>
+            <md-menu>
+                <md-button ng-click="$mdOpenMenu()" ng-show="!!ctrl.user" class="{{$mdMedia('gt-md')? '' : 'md-icon-button md-mini'}}">
                     <md-icon alt="user">person</md-icon>
-                    {{ctrl.user}}
+                    <span hide show-gt-sm>{{ctrl.user}}</span>
                 </md-button>
                 <md-menu-content width="4">
                     <md-menu-item>

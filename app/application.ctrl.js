@@ -1,4 +1,4 @@
-function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, PlaylistSvc, $scope, $location) {
+function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, PlaylistSvc, $scope, $location, $mdToast) {
     this.songSvc = SongSvc;
     this.lineSvc = LineSvc;
     this.userSvc = UserSvc;
@@ -19,11 +19,98 @@ function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, Play
             }
         })
     })
-    
-    WebsocketSvc.subscribe("song.add", (song) => {
-        this.songs.push(song);
-        $scope.$apply();
+    WebsocketSvc.subscribe("playlist.add", (groupId, playlist, username) => {
+        if (this.currentGroup._id === groupId) {
+            this.playlists.push(playlist);
+            $scope.$apply();
+        }
+        this.showToast(username + ' added playlist "' + playlist.name + '" to "' + this.groups.find((item) => item._id === groupId).name +'"');
     });
+    
+    WebsocketSvc.subscribe("playlist.update", (groupId, playlist, username) => {
+        if (this.currentGroup._id === groupId) {
+            this.playlists.forEach((item, i) => {
+                if (item._id === playlist._id) {
+                    this.playlists[i] = playlist
+                }
+            });
+            $scope.$apply();
+        }
+        this.showToast(username + ' updated playlist "' + playlist.name + '" in "' + this.groups.find((item) => item._id === groupId).name +'"');
+    });
+    
+    WebsocketSvc.subscribe("playlist.delete", (groupId, playlist, username) => {
+        if (this.currentGroup._id === groupId) {
+            this.playlists = this.playlists.filter((item) => item._id !== playlist._id);
+            $scope.$apply();
+        }
+        this.showToast(username + ' deleted playlist "' + playlist.name + '" from "' + this.groups.find((item) => item._id === groupId).name +'"');
+    });
+    
+    WebsocketSvc.subscribe("playlist.song.add", (groupId, data, username) => {
+        if (this.currentGroup._id === groupId && this.currentPlaylist && this.currentPlaylist._id === data.playlist._id) {
+            this.songs.push(data.song);
+            $scope.$apply();
+        }
+        this.showToast(username + ' added song "' + data.song.name + '" to playlist "' + data.playlist.name +'" in "' + this.groups.find((item) => item._id === groupId).name +'"');
+    });
+    
+    WebsocketSvc.subscribe("playlist.song.delete", (groupId, data, username) => {
+        if (this.currentGroup._id === groupId && this.currentPlaylist && this.currentPlaylist._id === data.playlist._id) {
+            this.songs = this.songs.filter((item) => item._id !== data.song._id)
+            $scope.$apply();
+        }
+        this.showToast(username + ' removed song "' + data.song.name + '" from playlist "' + data.playlist.name +'" in "' + this.groups.find((item) => item._id === groupId).name +'"');
+
+    });
+    
+    WebsocketSvc.subscribe("group.request.add", (groupId, user) => {
+        this.groups.find((item) => item._id === groupId).memberRequests.push(user);
+        $scope.$apply;
+        this.showToast(user.username + ' wants to join "' + this.groups.find((item) => item._id === groupId).name +'"');
+    });
+    
+    WebsocketSvc.subscribe("group.member.add", (groupId, user, username) => {
+        this.showToast(user.username + ' joined "' + this.groups.find((item) => item._id === groupId).name +'"');
+    });
+    
+    WebsocketSvc.subscribe("group.member.accept", (ignore, group) => {
+        this.groups.push(group);
+        this.showToast('Welcome to ' + group.name);
+    });
+    
+    WebsocketSvc.subscribe("group.member.decline", (ignore, group) => {
+        this.showToast('Your request to join "' + group.name + '" was rejected');
+    });
+    
+    WebsocketSvc.subscribe("song.add", (groupId, song, username) => {
+        if (this.currentGroup._id === groupId && !this.currentPlaylist) {
+            this.songs.push(song);
+            $scope.$apply();
+        }
+        this.showToast(username + ' added song "' + song.name + '" to "' + this.groups.find((item) => item._id === groupId).name +'"');
+    });
+    
+    WebsocketSvc.subscribe("song.update", (groupId, song, username) => {
+        if (this.currentGroup._id === groupId && !this.currentPlaylist) {
+            this.songs.forEach((item, i) => {
+                if (item._id === song._id) {
+                    this.songs[i] = song
+                }
+            });
+            $scope.$apply();
+        }
+        this.showToast(username + ' updated song "' + song.name + '" in "' + this.groups.find((item) => item._id === groupId).name +'"');
+    });
+    
+    WebsocketSvc.subscribe("song.delete", (groupId, song, username) => {
+        if (this.currentGroup._id === groupId && !this.currentPlaylist) {
+            this.songs = this.songs.filter((item) => item._id !== song._id)
+            $scope.$apply();
+        }
+        this.showToast(username + ' deleted song "' + song.name + '" from "' + this.groups.find((item) => item._id === groupId).name +'"');
+    });
+    
     
     this.selectSong = (song) => {
         SongSvc.fetchOne(this.currentGroup._id, song._id)
@@ -120,6 +207,17 @@ function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, Play
     
     this.manageGroups = () => {
         this.$location.path('/groups')
+    }
+    
+    this.showToast = (message) => {
+        $mdToast.show($mdToast.simple().textContent(message).position("bottom right"));
+    }
+    
+    this.acceptMember = (group, user, accept) => {
+        GroupSvc.acceptMember(group, user, accept)
+        .then(() => {
+            group.memberRequests.splice(group.memberRequests.indexOf(user), 1);
+        })
     }
 }
 

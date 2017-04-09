@@ -1,6 +1,6 @@
 function GroupSvc($http) {
     this.fetchAll = function () {
-        return $http.get('/api/groups')
+        return $http.get('/api/user/groups')
             .then(function (response) {
                 return response.data
          })

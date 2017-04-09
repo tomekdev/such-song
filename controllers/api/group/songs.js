@@ -43,6 +43,7 @@ router.put('/song/:songId', function (req, res, next) {
                 if (err) {
                     return next(err)
                 }
+                websockets.broadcast(req.params.groupId, 'song.update', song, req.auth)
                 res.json(song)
             })
         })
@@ -58,6 +59,7 @@ router.delete('/song/:songId', function (req, res, next) {
                 if (err) {
                     return next(err)
                 }
+                websockets.broadcast(req.params.groupId, 'song.delete', song, req.auth)
                 res.status(200).end();
             })
         })
@@ -83,7 +85,7 @@ router.post('/songs', function (req, res, next) {
                     return next(err)
                 }
             })
-            websockets.broadcast('song.add', song, req.auth)
+            websockets.broadcast(req.params.groupId, 'song.add', song, req.auth)
             res.status(201).json(data)
         })
 

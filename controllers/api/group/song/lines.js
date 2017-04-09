@@ -26,8 +26,8 @@ router.post('/lines', function (req, res, next) {
                     return next(err)
                 }
             })
-            websockets.broadcast('line.add', {
-                song_id: req.params.songId,
+            websockets.broadcast(req.params.groupId, 'line.add', {
+                song_id: song._id,
                 position: iPosition,
                 line: line
             }, req.auth);
@@ -64,9 +64,9 @@ router.put('/line/:lineId', function (req, res, next) {
                 });
             });
         }
-        websockets.broadcast('line.save', {
+        websockets.broadcast(req.params.groupId, 'line.save', {
             song_id: req.params.songId,
-            line_id: req.params.lineId
+            line: line
         }, req.auth);
         res.status(200).json(line)
     });
@@ -90,9 +90,9 @@ router.delete('/line/:lineId', function (req, res, next) {
                     if (err) {
                         return next(err)
                     }
-                    websockets.broadcast('line.delete', {
+                    websockets.broadcast(req.params.groupId, 'line.delete', {
                         song_id: req.params.songId,
-                        line_id: req.params.lineId
+                        line: line
                     }, req.auth);
                     res.status(200).json(line)
                 });
