@@ -113,7 +113,7 @@ router.post('/playlist/:playlistId/songs', function (req, res, next) {
                     return next(err)
                 }
                 websockets.broadcast(req.params.groupId, 'playlist.song.add', {
-                    playlistId: playlist._id,
+                    playlist: playlist,
                     song: song
                 }, req.auth)
                 res.status(201).json(song)
@@ -137,7 +137,7 @@ router.delete('/playlist/:playlistId/song/:songId', function (req, res, next) {
                     return next(err)
                 }
                 websockets.broadcast(req.params.groupId, 'playlist.song.delete', {
-                    playlistId: playlist._id,
+                    playlist: playlist,
                     song: song
                 }, req.auth)
                 res.status(200).end()
