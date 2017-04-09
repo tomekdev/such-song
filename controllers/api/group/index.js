@@ -21,6 +21,9 @@ router.post('/memberrequests', function (req, res, next) {
                     if (err) {
                         return next(err)
                     }
+                    websockets.broadcast(req.params.groupId, 'group.request.add', {
+                        username: user.username,
+                    })
                     res.status(201).end();
                 })
             })
@@ -88,6 +91,9 @@ router.post('/members', function (req, res, next) {
                     if (err) {
                         return next(err)
                     }
+                    websockets.broadcast(req.params.groupId, 'group.member.add', {
+                        username: user.username
+                    }, req.auth)
                     res.status(201).end();
                 })
             })
