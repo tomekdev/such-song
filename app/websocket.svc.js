@@ -19,9 +19,10 @@ WebsocketSvc.prototype = {
             var input = JSON.parse(e.data),
                 event = input.event,
                 data = input.data,
-                groupId = input.groupId;
+                groupId = input.groupId,
+                username = input.sender;
             (that.callbacks[event] || []).forEach(function (callback) {
-                callback(groupId, data);
+                callback(groupId, data, username);
             });
         }
         this.connection.onclose = function (e) {

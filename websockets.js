@@ -30,7 +30,8 @@ exports.broadcast = function (group, event, data, sender) {
     var json = JSON.stringify({
         groupId: group,
         event: event, 
-        data: data
+        data: data,
+        sender: sender.username
     })
     clients.forEach(function (client) {
         if (!sender || client.auth.username !== sender.username || client.auth.timestamp !== sender.timestamp) {
