@@ -24,14 +24,14 @@ function SongController($scope, SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSv
     
     WebsocketSvc.subscribe("line.save", (data) => {
         if (data.song_id === SongSvc.selectedSong._id) {
-            SongSvc.selectedSong.lyrics.filter((line) => line._id === data.line_id).forEach((line) => line.editor=false);
+            SongSvc.selectedSong.lyrics.filter((line) => line._id === data.line._id).forEach((line) => line.editor=false);
             $scope.$apply();
         }
     })
     
     WebsocketSvc.subscribe("line.delete", (data) => {
         if (data.song_id === SongSvc.selectedSong._id) {
-            SongSvc.selectedSong.lyrics = SongSvc.selectedSong.lyrics.filter((line) => line._id !== data.line_id);
+            SongSvc.selectedSong.lyrics = SongSvc.selectedSong.lyrics.filter((line) => line._id !== data.line._id);
             $scope.$apply();
         }
     })
