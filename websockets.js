@@ -27,7 +27,11 @@ exports.connect = function (server) {
 }
 
 exports.broadcast = function (group, event, data, sender) {
-    var json = JSON.stringify({event: event, data: data})
+    var json = JSON.stringify({
+        groupId: group,
+        event: event, 
+        data: data
+    })
     clients.forEach(function (client) {
         if (!sender || client.auth.username !== sender.username || client.auth.timestamp !== sender.timestamp) {
             client.send(json)
