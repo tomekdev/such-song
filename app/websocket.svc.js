@@ -25,8 +25,9 @@ WebsocketSvc.prototype = {
                 callback(groupId, data, username);
             });
         }
-        this.connection.onclose = function (e) {
+        this.connection.onclose = (e) => {
             console.log("Connection closed")
+            setTimeout(this.connect.bind(this,token), 5000);
         }
     },
     send: function (groupId, event, data) {
