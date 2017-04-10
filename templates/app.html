@@ -67,7 +67,7 @@
                 </md-menu-content>
             </md-menu>
             <md-menu>
-                <md-button ng-click="$mdOpenMenu()" ng-show="!!ctrl.user" class="{{$mdMedia('gt-md')? '' : 'md-icon-button md-mini'}}">
+                <md-button ng-click="$mdOpenMenu()" ng-show="!!ctrl.user" ng-class="{ 'md-icon-button': !ctrl.$mdMedia('gt-sm') }">
                     <md-icon alt="user">person</md-icon>
                     <span hide show-gt-sm>{{ctrl.user}}</span>
                 </md-button>

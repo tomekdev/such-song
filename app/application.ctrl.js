@@ -1,4 +1,5 @@
-function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, PlaylistSvc, $scope, $location, $mdToast) {
+function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, PlaylistSvc, $scope, $location, $mdToast, $mdMedia) {
+    this.$mdMedia = $mdMedia;
     this.songSvc = SongSvc;
     this.lineSvc = LineSvc;
     this.userSvc = UserSvc;
