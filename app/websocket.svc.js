@@ -4,9 +4,10 @@ function WebsocketSvc($window) {
 }
 
 WebsocketSvc.prototype = {
-    connect: function (token) {
+    connect: function (token, timeout) {
         var that = this;
         var host
+        var connectionOpen;
         if (this.$window.location.protocol === "https:") {
             host = "wss://"
         } else {
@@ -26,8 +27,19 @@ WebsocketSvc.prototype = {
             });
         }
         this.connection.onclose = (e) => {
-            console.log("Connection closed")
-            setTimeout(this.connect.bind(this,token), 5000);
+            connectionOpen = false;
+            setTimeout(this.connect.bind(this,token,timeout? timeout+1000 : 2000), timeout || 1000);
+        }
+        this.connection.onopen = (e) => {
+            connectionOpen = true;
+            setTimeout(ping,25000);
+        }
+        
+        var ping = () => {
+            this.connection.send("!");
+            if (connectionOpen) {
+                setTimeout(ping, 25000);
+            }
         }
     },
     send: function (groupId, event, data) {

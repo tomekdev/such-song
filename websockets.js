@@ -35,21 +35,23 @@ exports.connect = function (server) {
             _.remove(clients, ws)
         });
         ws.on("message", function (message) {
-            var data = JSON.parse(message);
-            User.findOne({username: ws.auth.username, group: data.groupId})
-            .populate('groups')
-            .exec((err, user) => {
-                if (err) {
-                    return next(err)
-                }
-                if (Array.isArray(groups[data.groupId])) {
-                    groups[data.groupId].forEach(function (client) {
-                        if (client !== ws) {
-                            client.send(message, (error) => {})
-                        }
-                    })
-                }
-            });
+            if (message != "!") { //ping message
+                var data = JSON.parse(message);
+                User.findOne({username: ws.auth.username, group: data.groupId})
+                .populate('groups')
+                .exec((err, user) => {
+                    if (err) {
+                        return next(err)
+                    }
+                    if (Array.isArray(groups[data.groupId])) {
+                        groups[data.groupId].forEach(function (client) {
+                            if (client !== ws) {
+                                client.send(message, (error) => {})
+                            }
+                        })
+                    }
+                });
+            }
         });
     })
 }
