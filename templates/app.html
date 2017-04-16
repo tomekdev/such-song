@@ -325,16 +325,16 @@
                 <div class="container" layout="column" flex ng-view></div>
             </div>
             <md-toolbar class="md-hue-2" layout="column" layout-gt-md="row" layout-align="space-between center" ng-if="!!ctrl.currentSong" ng-class="{ 'md-tall': !ctrl.$mdMedia('gt-md') }">
-                <md-slider min="0" max="{{ctrl.currentSong.duration.minutes*60 + ctrl.currentSong.duration.seconds}}" ng-model="ctrl.clock" class="md-primary such-progress-slider" ng-show="ctrl.currentSong.duration.minutes || ctrl.currentSong.duration.seconds"></md-slider>
+                <md-slider min="0" max="{{ctrl.currentSong.duration.minutes*60 + ctrl.currentSong.duration.seconds}}" ng-model="ctrl.clock" class="md-primary such-progress-slider" ng-show="ctrl.currentSong.duration.minutes > 0 || ctrl.currentSong.duration.seconds > 0"></md-slider>
 
                 <div layout="row" layout-align="center center" layout-margin>
                     <md-icon alt="song">library_music</md-icon>
                     <div layout="column" layout-align="space-between start">
-                        <span>{{ctrl.currentSong.name}}{{ctrl.clock}}</span>
+                        <span>{{ctrl.currentSong.name}}</span>
                         <small>{{ctrl.currentSong.author}}</small>
                     </div>
                 </div>
-                <div layout="row" layout-align="end center" layout-margin>
+                <div layout="row" layout-align="end center" layout-margin ng-if="ctrl.currentSong.duration.minutes > 0 || ctrl.currentSong.duration.seconds > 0">
                     <md-button class="md-icon-button md-mini" ng-click="ctrl.autoscroll = !ctrl.autoscroll" ng-class="{ 'md-fab': !!ctrl.autoscroll, 'md-primary': !!ctrl.autoscroll }">
                         <md-icon alt="song">format_line_spacing</md-icon>
                         <md-tooltip md-direction="top">Auto scroll</md-tooltip>
