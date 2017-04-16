@@ -1,4 +1,4 @@
-function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, PlaylistSvc, $scope, $location, $mdToast, $mdMedia) {
+function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, PlaylistSvc, $scope, $location, $mdToast, $mdMedia, $interval) {
     this.$mdMedia = $mdMedia;
     this.songSvc = SongSvc;
     this.lineSvc = LineSvc;
@@ -117,6 +117,7 @@ function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, Play
         SongSvc.fetchOne(this.currentGroup._id, song._id)
         .then((song) => {
             this.currentSong = song;
+            this.clock = 0;
             SongSvc.selectedSong = song;
             $location.path('/song')
         })
@@ -172,6 +173,7 @@ function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, Play
         SongSvc.fetchAll(this.currentGroup._id, playlist? playlist._id : null)
         .then((songs) => {
             this.songs = songs;
+            this.currentSong = songs[0];
         });
     }
     
@@ -220,6 +222,54 @@ function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, Play
             group.memberRequests.splice(group.memberRequests.indexOf(user), 1);
         })
     }
+    
+    this.nextSong = () => {
+        var newSongIndex = this.songs.findIndex(song => song._id === this.currentSong._id)+1
+        if (newSongIndex < this.songs.length) {
+            this.currentSong = this.songs[newSongIndex]
+            this.clock = 0;
+        }
+        else {
+            this.playing = false;
+        }
+    }
+    
+    this.previousSong = () => {
+        var newSongIndex = this.songs.findIndex(song => song._id === this.currentSong._id)-1
+        if (newSongIndex >= 0) {
+            this.currentSong = this.songs[newSongIndex]
+            this.clock = 0;
+        }
+        else {
+            this.playing = false;
+        }
+    }
+    
+    this.onPlayPause = () => {
+        if (this.clock >= this.currentSong.duration.seconds + this.currentSong.duration.minutes*60) {
+            this.clock = 0;
+        }
+        this.playing = !this.playing;
+    }
+    
+    var tick = () => {
+        if (this.playing) {
+            if(this.clock >= this.currentSong.duration.seconds + this.currentSong.duration.minutes*60) {
+                if (this.autoplay && this.currentPlaylist) {
+                    this.nextSong()
+                }
+                else {
+                    this.playing = false;
+                }
+            }
+            else {
+                this.clock = this.clock + 1 || 0;
+            }
+            $scope.$digest();
+        }
+    }
+    tick();
+    $interval(tick, 1000, 0, false);
 }
 
 ApplicationCtrl.prototype = {

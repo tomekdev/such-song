@@ -1,46 +1,48 @@
-<div ng-controller="SongCtrl as ctrl">
-    <md-card>
-        <md-card-title>
-            <md-card-title-text layout="row" layout-align="space-between end">
-                <div layout="column" layout-align="space-between start" layout-fill>
-                    <span class="md-headline">{{ctrl.selectedSong.name}}</span>
-                    <span class="md-subhead">{{ctrl.selectedSong.author}}</span>
-                </div>
-                <div layout="row">
-                    <md-button class="md-fab md-primary" aria-label="Edit song" ng-show="!ctrl.flags.editSong" ng-click="ctrl.flags.editSong = true">
-                        <md-icon alt="edit">create</md-icon>
-                    </md-button>
-                    <md-button class="md-fab" aria-label="Edit song" ng-show="ctrl.flags.editSong" ng-click="ctrl.saveLines()" style="background-color: seagreen;">
-                        <md-icon alt="edit">save</md-icon>
-                    </md-button>
-                </div>
-            </md-card-title-text>
-        </md-card-title>
-    </md-card>
-    <md-button class="md-fab" aria-label="Add line" ng-if="ctrl.flags.editSong && ctrl.selectedSong.lyrics.length == 0" ng-click="ctrl.addLine(0)">
-        <md-icon alt="edit">add</md-icon>
-    </md-button>
-    <div ng-repeat="(index, line) in ctrl.selectedSong.lyrics" ng-mouseenter="active? focused = true : null" ng-mouseleave="focused = false">
-        <md-button class="md-fab md-mini" aria-label="Add line" ng-show="focused && ctrl.flags.editSong" ng-click="focused = false; ctrl.addLine(index)">
+<div ng-controller="SongCtrl as sctrl" flex layout="column">
+    <md-content flex such-scroll-percent="ctrl.autoscroll? ctrl.clock/(ctrl.currentSong.duration.minutes*60 + ctrl.currentSong.duration.seconds) : false" such-on-scroll="ctrl.autoscroll = false">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text layout="row" layout-align="space-between end">
+                    <div layout="column" layout-align="space-between start" layout-fill>
+                        <span class="md-headline">{{sctrl.selectedSong.name}}</span>
+                        <span class="md-subhead">{{sctrl.selectedSong.author}}</span>
+                    </div>
+                    <div layout="row">
+                        <md-button class="md-fab md-primary" aria-label="Edit song" ng-show="!sctrl.flags.editSong" ng-click="sctrl.flags.editSong = true">
+                            <md-icon alt="edit">create</md-icon>
+                        </md-button>
+                        <md-button class="md-fab" aria-label="Edit song" ng-show="sctrl.flags.editSong" ng-click="sctrl.saveLines()" style="background-color: seagreen;">
+                            <md-icon alt="edit">save</md-icon>
+                        </md-button>
+                    </div>
+                </md-card-title-text>
+            </md-card-title>
+        </md-card>
+        <md-button class="md-fab" aria-label="Add line" ng-if="sctrl.flags.editSong && sctrl.selectedSong.lyrics.length == 0" ng-click="sctrl.addLine(0)">
             <md-icon alt="edit">add</md-icon>
         </md-button>
-        <div layout="row" flex>
-            <md-input-container md-no-float class="md-block" layout-fill>
-                <input ng-model="line.text" ng-disabled="!ctrl.flags.editSong || !!line.editor" ng-focus="active = true" ng-click="focused = true" ng-blur="active = false; ctrl.updateLine(line)" ng-change="line.dirty = true" ng-keyup="ctrl.changeLine($event, line, index); $event.keyCode == 13 ? focused = false: null" id="line_{{$index}}">
-            </md-input-container>
-            <md-button class="md-fab md-mini md-warn" aria-label="Add line" ng-show="ctrl.flags.editSong && line.dirty" ng-click="ctrl.updateLine(line)" style="background-color: seagreen;">
-                <md-icon alt="edit">save</md-icon>
+        <div ng-repeat="(index, line) in sctrl.selectedSong.lyrics" ng-mouseenter="active? focused = true : null" ng-mouseleave="focused = false">
+            <md-button class="md-fab md-mini" aria-label="Add line" ng-show="focused && sctrl.flags.editSong" ng-click="focused = false; sctrl.addLine(index)">
+                <md-icon alt="edit">add</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini md-warn" aria-label="Delete line" ng-show="ctrl.flags.editSong && !line.editor" ng-click="ctrl.deleteLine(line, index)" style="background-color: firebrick;">
-                <md-icon alt="edit">delete</md-icon>
-            </md-button>
-            <md-button class="md-fab md-mini md-warn" aria-label="Locked line" ng-show="!!line.editor"  style="background-color: tomato;" disabled>
-                <md-tooltip>Edited by {{line.editor}}</md-tooltip>
-                <md-icon alt="edit">lock</md-icon>
+            <div layout="row" flex>
+                <md-input-container md-no-float class="md-block" layout-fill>
+                    <input ng-model="line.text" ng-disabled="!sctrl.flags.editSong || !!line.editor" ng-focus="active = true" ng-click="focused = true" ng-blur="active = false; sctrl.updateLine(line)" ng-change="line.dirty = true" ng-keyup="sctrl.changeLine($event, line, index); $event.keyCode == 13 ? focused = false: null" id="line_{{$index}}">
+                </md-input-container>
+                <md-button class="md-fab md-mini md-warn" aria-label="Add line" ng-show="sctrl.flags.editSong && line.dirty" ng-click="sctrl.updateLine(line)" style="background-color: seagreen;">
+                    <md-icon alt="edit">save</md-icon>
+                </md-button>
+                <md-button class="md-fab md-mini md-warn" aria-label="Delete line" ng-show="sctrl.flags.editSong && !line.editor" ng-click="sctrl.deleteLine(line, index)" style="background-color: firebrick;">
+                    <md-icon alt="edit">delete</md-icon>
+                </md-button>
+                <md-button class="md-fab md-mini md-warn" aria-label="Locked line" ng-show="!!line.editor"  style="background-color: tomato;" disabled>
+                    <md-tooltip>Edited by {{line.editor}}</md-tooltip>
+                    <md-icon alt="edit">lock</md-icon>
+                </md-button>
+            </div>
+            <md-button class="md-fab md-mini" aria-label="Add line" ng-show="focused && sctrl.flags.editSong" ng-click="focused = false; sctrl.addLine(index+1)">
+                <md-icon alt="edit">add</md-icon>
             </md-button>
         </div>
-        <md-button class="md-fab md-mini" aria-label="Add line" ng-show="focused && ctrl.flags.editSong" ng-click="focused = false; ctrl.addLine(index+1)">
-            <md-icon alt="edit">add</md-icon>
-        </md-button>
-    </div>
+    </md-content>
 </div>
