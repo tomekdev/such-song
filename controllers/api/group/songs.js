@@ -39,6 +39,8 @@ router.put('/song/:songId', function (req, res, next) {
             }
             song.name = req.body.name;
             song.author = req.body.author;
+            song.duration.minutes = req.body.duration? req.body.duration.minutes : null;
+            song.duration.seconds = req.body.duration? req.body.duration.seconds : null;
             song.save(function (err, song) {
                 if (err) {
                     return next(err)
@@ -68,7 +70,11 @@ router.delete('/song/:songId', function (req, res, next) {
 router.post('/songs', function (req, res, next) {
     var song = new Song({
         name: req.body.name,
-        author: req.body.author
+        author: req.body.author,
+        duration: {
+            minutes: req.body.duration? req.body.duration.minutes : null,
+            seconds: req.body.duration? req.body.duration.seconds : null
+        }
     })
     Group.findById(req.params.groupId, function (err, group) {
         if (err) {

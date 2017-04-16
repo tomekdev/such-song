@@ -14,7 +14,7 @@
     <!-- Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Such song">
-    <!--    <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon.png">-->
+    <link rel="icon" sizes="192x192" href="suchicon.ico">
 
     <!-- Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -29,7 +29,8 @@
 
     <meta name="theme-color" content="#607D8B">
 
-    <!--    <link rel="shortcut icon" href="favicon.ico">-->
+    <link rel="icon" href="suchicon.ico">
+    <link rel="shortcut icon" href="suchicon.ico">
 
     <title>Such song</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.3/angular-material.min.css">
@@ -67,7 +68,7 @@
                 </md-menu-content>
             </md-menu>
             <md-menu>
-                <md-button ng-click="$mdOpenMenu()" ng-show="!!ctrl.user" class="{{$mdMedia('gt-md')? '' : 'md-icon-button md-mini'}}">
+                <md-button ng-click="$mdOpenMenu()" ng-show="!!ctrl.user" ng-class="{ 'md-icon-button': !ctrl.$mdMedia('gt-sm') }">
                     <md-icon alt="user">person</md-icon>
                     <span hide show-gt-sm>{{ctrl.user}}</span>
                 </md-button>
@@ -211,14 +212,20 @@
                         <md-list-item ng-show="ctrl.flags.songMode === 'add'">
                             <form flex ng-submit="ctrl.addSong(ctrl.song)">
                                 Add a new song
-                                <md-input-container class="md-block" flex>
-                                    <label>Name</label>
-                                    <input ng-model="ctrl.song.name">
+                                <md-input-container md-no-float class="md-block" flex>
+                                    <input ng-model="ctrl.song.name" placeholder="Name">
                                 </md-input-container>
-                                <md-input-container class="md-block" flex>
-                                    <label>Author</label>
-                                    <input ng-model="ctrl.song.author">
+                                <md-input-container md-no-float class="md-block" flex>
+                                    <input ng-model="ctrl.song.author" placeholder="Author">
                                 </md-input-container>
+                                <div layout="row">
+                                        <md-input-container md-no-float class="md-block" flex>
+                                            <input type="number" min="0" ng-model="song.duration.minutes" placeholder="Minutes">
+                                        </md-input-container>
+                                        <md-input-container md-no-float class="md-block" flex>
+                                            <input type="number" min="0" max="59" ng-model="song.duration.seconds" placeholder="Seconds">
+                                        </md-input-container>
+                                    </div>
                                 <span ng-if="!!ctrl.currentPlaylist">or chose an existing song</span>
                                 <md-select ng-if="!!ctrl.currentPlaylist" ng-model="ctrl.song._id" md-on-close="songSearchTerm = null">
                                     <md-select-header layout="column" layout-align="space-between stretch">
@@ -241,12 +248,20 @@
                             </div>
                             <div flex class="md-list-item-text" ng-show="ctrl.flags.songMode === 'edit'">
                                 <form ng-submit="updateSong(song)" layout="column" flex>
-                                    <md-input-container class="md-block" flex>
-                                        <input required ng-model="song.name">
+                                    <md-input-container md-no-float class="md-block" flex>
+                                        <input required ng-model="song.name" placeholder="Name">
                                     </md-input-container>
-                                    <md-input-container class="md-block" flex>
-                                        <input required ng-model="song.author">
+                                    <md-input-container md-no-float class="md-block" flex>
+                                        <input  ng-model="song.author" placeholder="Author">
                                     </md-input-container>
+                                    <div layout="row">
+                                        <md-input-container md-no-float class="md-block" flex>
+                                            <input type="number" min="0" ng-model="song.duration.minutes" placeholder="Minutes">
+                                        </md-input-container>
+                                        <md-input-container md-no-float class="md-block" flex>
+                                            <input type="number" min="0" max="59" ng-model="song.duration.seconds" placeholder="Seconds">
+                                        </md-input-container>
+                                    </div>
                                     <div layout="row" layout-align="end">
                                         <md-button aria-label="menu" class="md-icon-button md-mini" ng-click="ctrl.updateSong(song)">
                                             <md-icon>save</md-icon>
@@ -305,11 +320,62 @@
                 </section>-->
             </md-content>
         </md-sidenav>
-        <md-content flex layout="column" id="content">
-            <div class="container" layout="column" flex ng-view></div>
-        </md-content>
+        <div flex layout="column" id="content">
+            <div layout="column" flex>
+                <div class="container" layout="column" flex ng-view></div>
+            </div>
+            <md-toolbar class="md-hue-2" layout="column" layout-gt-md="row" layout-align="space-between center" ng-if="!!ctrl.currentSong" ng-class="{ 'md-tall': !ctrl.$mdMedia('gt-md') }">
+                <md-slider min="0" max="{{ctrl.currentSong.duration.minutes*60 + ctrl.currentSong.duration.seconds}}" ng-model="ctrl.clock" class="md-primary such-progress-slider" ng-show="ctrl.currentSong.duration.minutes > 0 || ctrl.currentSong.duration.seconds > 0"></md-slider>
+
+                <div layout="row" layout-align="center center" layout-margin>
+                    <md-icon alt="song">library_music</md-icon>
+                    <div layout="column" layout-align="space-between start">
+                        <span>{{ctrl.currentSong.name}}</span>
+                        <small>{{ctrl.currentSong.author}}</small>
+                    </div>
+                </div>
+                <div layout="row" layout-align="end center" layout-margin ng-if="ctrl.currentSong.duration.minutes > 0 || ctrl.currentSong.duration.seconds > 0">
+                    <md-button class="md-icon-button md-mini" ng-click="ctrl.autoscroll = !ctrl.autoscroll" ng-class="{ 'md-fab': !!ctrl.autoscroll, 'md-primary': !!ctrl.autoscroll }">
+                        <md-icon alt="song">format_line_spacing</md-icon>
+                        <md-tooltip md-direction="top">Auto scroll</md-tooltip>
+                    </md-button>
+                    <md-button class="md-icon-button md-mini" ng-click="ctrl.autoplay = !ctrl.autoplay" ng-class="{ 'md-fab': !!ctrl.autoplay, 'md-primary': !!ctrl.autoplay }" hide show-gt-sm>
+                        <md-icon alt="song">slow_motion_video</md-icon>
+                        <md-tooltip md-direction="top">Auto play</md-tooltip>
+                    </md-button>
+                    <md-button class="md-icon-button md-mini" ng-click="ctrl.clock = ctrl.clock - 10 > 0? ctrl.clock - 10 : 0">
+                        <md-icon alt="song">fast_rewind</md-icon>
+                        <md-tooltip md-direction="top">-10s</md-tooltip>
+                    </md-button>
+                    <md-button class="md-fab md-mini md-primary" ng-if="!!ctrl.currentPlaylist" ng-click="ctrl.previousSong()">
+                        <md-icon alt="song">skip_previous</md-icon>
+                        <md-tooltip md-direction="top">Previous song</md-tooltip>
+                    </md-button>
+                    <md-button class="md-fab md-primary" ng-click="ctrl.onPlayPause()" >
+                        <md-icon alt="song">{{ctrl.playing? 'pause' : 'play_arrow'}}</md-icon>
+                        <md-tooltip md-direction="top">{{ctrl.playing? 'Pause' : 'Play'}}</md-tooltip>
+                    </md-button>
+                    <md-button class="md-fab md-mini md-primary" ng-if="!!ctrl.currentPlaylist" ng-click="ctrl.nextSong()">
+                        <md-icon alt="song">skip_next</md-icon>
+                        <md-tooltip md-direction="top">Next song</md-tooltip>
+                    </md-button>
+                    <md-button class="md-icon-button md-mini" ng-click="ctrl.clock = ctrl.clock + 10 < ctrl.currentSong.duration.minutes*60 + ctrl.currentSong.duration.seconds? ctrl.clock + 10 : ctrl.currentSong.duration.minutes*60 + ctrl.currentSong.duration.seconds">
+                        <md-icon alt="song">fast_forward</md-icon>
+                        <md-tooltip md-direction="top">+10s</md-tooltip>
+                    </md-button>
+                    <md-button class="md-icon-button md-mini" ng-click="ctrl.autoplay = !ctrl.autoplay" ng-class="{ 'md-fab': !!ctrl.autoplay, 'md-primary': !!ctrl.autoplay }" hide-gt-sm>
+                        <md-icon alt="song">slow_motion_video</md-icon>
+                        <md-tooltip md-direction="top">Auto play</md-tooltip>
+                    </md-button>
+                </div>
+            </md-toolbar>
+        </div>
     </div>
 
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>

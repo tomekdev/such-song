@@ -9,6 +9,14 @@ var song = db.model('song', {
     author: {
         type: String,
     },
+    duration: {
+        minutes: {
+            type: Number
+        },
+        seconds: {
+            type: Number
+        }
+    },
     added: {
         type: Date,
         required: true,

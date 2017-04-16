@@ -7,3 +7,21 @@ md-toast .md-toast-content {
 md-menu-item .md-button.md-focused:not(:hover):focus {
 	background-color: transparent;
 }
+
+.such-progress-slider {
+	position:absolute;
+	top: -10px;
+	width:100%;
+	overflow:hidden;
+	margin-left: 0;
+}
+
+md-slider.such-progress-slider .md-track-container {
+	top: 10px;
+	height:5px;
+}
+
+md-slider.such-progress-slider .md-thumb {
+	top: 3px;
+}
+
