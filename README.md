@@ -1,7 +1,7 @@
 # such-song
 ## What is it?
 > Dude, how cool it would be to have an app to organize all your songs and edit them in real time?
-</br>
+
 > Say no more!
 
 **Such song** is a web application letting you organize songs and their lyrics. 
