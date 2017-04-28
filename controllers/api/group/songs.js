@@ -10,7 +10,7 @@ router.use('/song/:songId', require('./song'))
 
 router.get('/songs', function (req, res, next) {
     Group.findById(req.params.groupId)
-        .populate('songs')
+        .populate('songs', '-lyrics')
         .exec(function (err, group) {
         if (err) {
             return next(err)
