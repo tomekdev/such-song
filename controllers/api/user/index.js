@@ -6,7 +6,7 @@ router.get('/', function (req, res, next) {
     User.findOne({
         username: req.auth.username
     })
-    .select('lastGroup')
+    .select('lastGroup username')
     .populate('lastGroup')
     .exec(function(err, user){
         if (err) {

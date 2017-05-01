@@ -1,4 +1,4 @@
-function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, PlaylistSvc, $scope, $location, $mdToast, $mdMedia, $interval) {
+function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, PlaylistSvc, $scope, $location, $mdToast, $mdMedia, $interval, $timeout) {
     this.$mdMedia = $mdMedia;
     this.songSvc = SongSvc;
     this.lineSvc = LineSvc;
@@ -7,7 +7,7 @@ function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, Play
     this.$location = $location;
     this.flags = {};
     
-    $scope.$on("login", () => {
+    var login = () => {
         GroupSvc.fetchAll().then((groups) => {
             this.groups = groups;
             this.flags.showSideNav = true;
@@ -19,6 +19,19 @@ function ApplicationCtrl(SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSvc, Play
                 this.selectGroup(user.lastGroup);
             }
         })
+    }
+    
+    $timeout(() => {
+        var token = localStorage.getItem("token");
+        if (token) {
+            UserSvc.token = token;
+            WebsocketSvc.connect(UserSvc.token);
+            login();
+        }
+    });
+    
+    $scope.$on("login", () => {
+        login();
     })
     WebsocketSvc.subscribe("playlist.add", (groupId, playlist, username) => {
         if (this.currentGroup._id === groupId) {
@@ -296,6 +309,7 @@ ApplicationCtrl.prototype = {
         this.songs = null;
         this.playlists = null;
         this.groups = null;
+        localStorage.clear();
         this.$location.path('/login')
     },
  /*   addSong: function () {

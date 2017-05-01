@@ -24,7 +24,7 @@ angular.module('app')
     }).run(function(UserSvc, $rootScope, $location){
 
     $rootScope.$on("$locationChangeStart", function(event, next, current) {
-        if (!UserSvc.currentUser) {
+        if (!UserSvc.currentUser && !localStorage.getItem("token")) {
             $location.path("/login")
         }
     });

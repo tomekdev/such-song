@@ -4,6 +4,7 @@ function LoginCtrl($scope, $location, UserSvc, WebsocketSvc) {
         this.loginError = null;
         UserSvc.login(username, password)
             .then((user)  => {
+                localStorage.setItem("token", UserSvc.token)
                 WebsocketSvc.connect(UserSvc.token);
                 this.flags.loginBusy = false;
                 $location.path('/')
