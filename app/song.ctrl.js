@@ -35,6 +35,43 @@ function SongController($scope, SongSvc, LineSvc, UserSvc, WebsocketSvc, GroupSv
             $scope.$apply();
         }
     })
+    
+    var paths = document.getElementsByTagName('path');
+    var visualizer = document.getElementById('visualizer');
+    var mask = visualizer.getElementById('mask');
+    var path;
+    var report = 0;
+    
+    var soundAllowed = function (stream) {
+        window.persistAudioStream = stream;
+        var audioContent = new AudioContext();
+        var audioStream = audioContent.createMediaStreamSource( stream );
+        var analyser = audioContent.createAnalyser();
+        audioStream.connect(analyser);
+        analyser.fftSize = 4096;
+        analyser.minDecibels = -80;
+
+        var frequencyArray = new Uint8Array(analyser.frequencyBinCount);
+      
+        for (var i = 0 ; i < 64; i++) {
+            path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            mask.appendChild(path);
+        }
+        var doDraw = function () {
+            setTimeout(doDraw,50);
+            analyser.getByteFrequencyData(frequencyArray);
+          	var adjustedLength;
+            for (var i = 0 ; i < 64; i++) {
+              	adjustedLength = frequencyArray[i+5];
+                paths[i].setAttribute('d', 'M '+ (i*4+2) +',255 l 0,-' + adjustedLength);
+
+            }
+
+        }
+        doDraw();
+    }
+    navigator.getUserMedia({audio:true}, soundAllowed, () => {});
+
 }
 
 SongController.prototype = {
