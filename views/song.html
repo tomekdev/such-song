@@ -21,6 +21,19 @@
         <md-button class="md-fab" aria-label="Add line" ng-if="sctrl.flags.editSong && sctrl.selectedSong.lyrics.length == 0" ng-click="sctrl.addLine(0)">
             <md-icon alt="edit">add</md-icon>
         </md-button>
+        <svg preserveAspectRatio="none" id="visualizer" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <defs>
+                <mask id="mask">
+                    <g id="maskGroup">
+                  </g>
+                </mask>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#607D8B;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:rgb(55,55,55);stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="100%" height="100%" fill="url(#gradient)" mask="url(#mask)"></rect>
+        </svg>
         <div ng-repeat="(index, line) in sctrl.selectedSong.lyrics" ng-mouseenter="active? focused = true : null" ng-mouseleave="focused = false">
             <md-button class="md-fab md-mini" aria-label="Add line" ng-show="focused && sctrl.flags.editSong" ng-click="focused = false; sctrl.addLine(index)">
                 <md-icon alt="edit">add</md-icon>
@@ -35,7 +48,7 @@
                 <md-button class="md-fab md-mini md-warn" aria-label="Delete line" ng-show="sctrl.flags.editSong && !line.editor" ng-click="sctrl.deleteLine(line, index)" style="background-color: firebrick;">
                     <md-icon alt="edit">delete</md-icon>
                 </md-button>
-                <md-button class="md-fab md-mini md-warn" aria-label="Locked line" ng-show="!!line.editor"  style="background-color: tomato;" disabled>
+                <md-button class="md-fab md-mini md-warn" aria-label="Locked line" ng-show="!!line.editor" style="background-color: tomato;" disabled>
                     <md-tooltip>Edited by {{line.editor}}</md-tooltip>
                     <md-icon alt="edit">lock</md-icon>
                 </md-button>
