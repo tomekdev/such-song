@@ -76,7 +76,7 @@
                     <md-menu-item>
                         <md-button ng-click="ctrl.logout()">
                             <md-icon alt="logout">power_settings_new</md-icon>
-                            Logout
+                            {{'logout' | translate}}
                         </md-button>
                     </md-menu-item>
                 </md-menu-content>
@@ -110,12 +110,12 @@
                 <section ng-show="!!ctrl.playlists">
                     <md-subheader class="md-no-sticky" ng-click="ctrl.flags.expandPlaylists = !ctrl.flags.expandPlaylists">
                         <div layout="row" flex layout-align="start center">
-                            Playlists
+                            {{'playlists' | translate}}
                             <div>
                                 <md-icon alt="expand playlists">{{ctrl.flags.expandPlaylists? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</md-icon>
                             </div>
                         </div>
-                        <md-tooltip ng-if="!ctrl.flags.expandPlaylists">Expand all playlists</md-tooltip>
+                        <md-tooltip ng-if="!ctrl.flags.expandPlaylists">{{'expandPlaylists' | translate}}</md-tooltip>
                     </md-subheader>
                     <md-list ng-show="ctrl.flags.expandPlaylists" style="position: relative;">
                         <md-fab-speed-dial md-direction="left" class="md-scale" style="position: absolute; top: -26px; right: 0;">
@@ -142,18 +142,18 @@
                         <md-list-item ng-show="ctrl.flags.playlistMode === 'add'">
                             <form flex ng-submit="ctrl.addPlaylist(playlist)">
                                 <md-input-container class="md-block" flex>
-                                    <label>Name</label>
+                                    <label>{{'name' | translate}}</label>
                                     <input required ng-model="playlist.name">
                                 </md-input-container>
                                 <div layout="row" layout-align="end">
-                                    <md-button type="submit" class="md-primary md-raised">Add</md-button>
+                                    <md-button type="submit" class="md-primary md-raised">{{'add' | translate}}</md-button>
                                 </div>
                                 <md-divider></md-divider>
                             </form>
                         </md-list-item>
                         <md-list-item ng-click="ctrl.selectPlaylist()">
                             <div layout="row" flex layout-align="space-between center" class="md-list-item-text">
-                                All songs
+                                {{'allSongs' | translate}}
                             </div>
                         </md-list-item>
                         <md-list-item ng-repeat="playlist in ctrl.playlists" ng-click="ctrl.selectPlaylist(playlist)">
@@ -180,12 +180,12 @@
                 <section ng-show="!!ctrl.songs">
                     <md-subheader class="md-no-sticky" ng-click="ctrl.flags.expandSongs = !ctrl.flags.expandSongs">
                         <div layout="row" flex layout-align="start center">
-                            Songs
+                            {{'songs' | translate}}
                             <div>
                                 <md-icon alt="expand songs">{{ctrl.flags.expandSongs? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</md-icon>
                             </div>
                         </div>
-                        <md-tooltip ng-if="!ctrl.flags.expandSongs">Expand all songs</md-tooltip>
+                        <md-tooltip ng-if="!ctrl.flags.expandSongs">{{'expandSongs' | translate}}</md-tooltip>
                     </md-subheader>
                     <md-list ng-show="ctrl.flags.expandSongs" style="position: relative;">
                         <md-fab-speed-dial md-direction="left" class="md-scale" style="position: absolute; top: -26px; right: 0;">
@@ -211,19 +211,19 @@
                         </md-button>
                         <md-list-item ng-show="ctrl.flags.songMode === 'add'">
                             <form flex ng-submit="ctrl.addSong(ctrl.song)">
-                                Add a new song
+                                {{'add' | translate}}
                                 <md-input-container md-no-float class="md-block" flex>
-                                    <input ng-model="ctrl.song.name" placeholder="Name">
+                                    <input ng-model="ctrl.song.name" placeholder="{{'name' | translate}}">
                                 </md-input-container>
                                 <md-input-container md-no-float class="md-block" flex>
-                                    <input ng-model="ctrl.song.author" placeholder="Author">
+                                    <input ng-model="ctrl.song.author" placeholder="{{'author' | translate}}">
                                 </md-input-container>
                                 <div layout="row">
                                         <md-input-container md-no-float class="md-block" flex>
-                                            <input type="number" min="0" ng-model="song.duration.minutes" placeholder="Minutes">
+                                            <input type="number" min="0" ng-model="song.duration.minutes" placeholder="{{'minutes' | translate}}">
                                         </md-input-container>
                                         <md-input-container md-no-float class="md-block" flex>
-                                            <input type="number" min="0" max="59" ng-model="song.duration.seconds" placeholder="Seconds">
+                                            <input type="number" min="0" max="59" ng-model="song.duration.seconds" placeholder="{{'seconds' | translate}}">
                                         </md-input-container>
                                     </div>
                                 <span ng-if="!!ctrl.currentPlaylist">or chose an existing song</span>
@@ -337,11 +337,11 @@
                 <div layout="row" layout-align="end center" layout-margin ng-if="ctrl.currentSong.duration.minutes > 0 || ctrl.currentSong.duration.seconds > 0">
                     <md-button class="md-icon-button md-mini" ng-click="ctrl.autoscroll = !ctrl.autoscroll" ng-class="{ 'md-fab': !!ctrl.autoscroll, 'md-primary': !!ctrl.autoscroll }">
                         <md-icon alt="song">format_line_spacing</md-icon>
-                        <md-tooltip md-direction="top">Auto scroll</md-tooltip>
+                        <md-tooltip md-direction="top">{{'autoScroll' | translate}}</md-tooltip>
                     </md-button>
                     <md-button class="md-icon-button md-mini" ng-click="ctrl.autoplay = !ctrl.autoplay" ng-class="{ 'md-fab': !!ctrl.autoplay, 'md-primary': !!ctrl.autoplay }" hide show-gt-sm>
                         <md-icon alt="song">slow_motion_video</md-icon>
-                        <md-tooltip md-direction="top">Auto play</md-tooltip>
+                        <md-tooltip md-direction="top">{{'autoPlay' | translate}}</md-tooltip>
                     </md-button>
                     <md-button class="md-icon-button md-mini" ng-click="ctrl.clock = ctrl.clock - 10 > 0? ctrl.clock - 10 : 0">
                         <md-icon alt="song">fast_rewind</md-icon>
@@ -349,15 +349,15 @@
                     </md-button>
                     <md-button class="md-fab md-mini md-primary" ng-if="!!ctrl.currentPlaylist" ng-click="ctrl.previousSong()">
                         <md-icon alt="song">skip_previous</md-icon>
-                        <md-tooltip md-direction="top">Previous song</md-tooltip>
+                        <md-tooltip md-direction="top">{{'previousSong' | translate}}</md-tooltip>
                     </md-button>
                     <md-button class="md-fab md-primary" ng-click="ctrl.onPlayPause()" >
                         <md-icon alt="song">{{ctrl.playing? 'pause' : 'play_arrow'}}</md-icon>
-                        <md-tooltip md-direction="top">{{ctrl.playing? 'Pause' : 'Play'}}</md-tooltip>
+                        <md-tooltip md-direction="top">{{ctrl.playing? 'pause' : 'play' | translate}}</md-tooltip>
                     </md-button>
                     <md-button class="md-fab md-mini md-primary" ng-if="!!ctrl.currentPlaylist" ng-click="ctrl.nextSong()">
                         <md-icon alt="song">skip_next</md-icon>
-                        <md-tooltip md-direction="top">Next song</md-tooltip>
+                        <md-tooltip md-direction="top">{{'nextSong' | translate}}</md-tooltip>
                     </md-button>
                     <md-button class="md-icon-button md-mini" ng-click="ctrl.clock = ctrl.clock + 10 < ctrl.currentSong.duration.minutes*60 + ctrl.currentSong.duration.seconds? ctrl.clock + 10 : ctrl.currentSong.duration.minutes*60 + ctrl.currentSong.duration.seconds">
                         <md-icon alt="song">fast_forward</md-icon>
@@ -365,7 +365,7 @@
                     </md-button>
                     <md-button class="md-icon-button md-mini" ng-click="ctrl.autoplay = !ctrl.autoplay" ng-class="{ 'md-fab': !!ctrl.autoplay, 'md-primary': !!ctrl.autoplay }" hide-gt-sm>
                         <md-icon alt="song">slow_motion_video</md-icon>
-                        <md-tooltip md-direction="top">Auto play</md-tooltip>
+                        <md-tooltip md-direction="top">{{'autoPlay' | translate}}</md-tooltip>
                     </md-button>
                 </div>
             </md-toolbar>
@@ -382,6 +382,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.3/angular-material.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate/2.11.0/angular-translate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate/2.11.0/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
     <script src="app.js"></script>
 </body>
 

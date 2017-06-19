@@ -1,10 +1,21 @@
-angular.module('app', ['ngMaterial', 'ngRoute'])
-    .config(function ($mdThemingProvider) {
+angular.module('app', ['ngMaterial', 'ngRoute', 'pascalprecht.translate'])
+    .config(function ($mdThemingProvider, $translateProvider) {
         $mdThemingProvider.theme('default')
             .primaryPalette('blue-grey')
             .accentPalette('brown')
             .warnPalette("pink")
             .dark();
+        $translateProvider.useStaticFilesLoader({
+            prefix: 'resources/translations/locale-',
+            suffix: '.json'
+        })
+            .registerAvailableLanguageKeys(['en','pl'], {
+                'en_*': 'en',
+                'pl_*': 'pl',
+                '*': 'en'
+            })
+            .determinePreferredLanguage()
+            .fallbackLanguage('en');
     });
 
 angular.module('app').directive("suchOnScroll", function ($window) {

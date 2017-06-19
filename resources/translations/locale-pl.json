@@ -1,0 +1,28 @@
+{
+    "login" : "Zaloguj się",
+    "username" : "Nazwa użytkownika:",
+    "password" : "Hasło",
+    "register" : "Zarejestruj się",
+    "login" : "Zaloguj",
+    "logout" : "Wyloguj",
+    "manageGroups" : "Zarządzaj grupami",
+    "playlists" : "Playlisty",
+    "expandPlaylists" : "Rozwiń playlisty",
+    "songs" : "Piosenki",
+    "expandSongs" : "Rozwiń piosenki",
+    "name" : "Tytuł",
+    "author" : "Autor",
+    "minutes" : "Minuty",
+    "seconds" : "Sekundy",
+    "add" : "Dodaj",
+    "autoScroll" : "Auto-przewijanie",
+    "autoPlay" : "Auto-odtwarzanie",
+    "play" : "Start",
+    "puase" : "Wstrzymaj",
+    "previousSong" : "Poprzednia",
+    "nextSong" : "Następna",
+    "myGroups" : "Moje grupy",
+    "allSongs" : "Wszystkie piosenki",
+    "groups" : "Grupy"
+
+}

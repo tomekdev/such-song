@@ -2,18 +2,18 @@
     <md-card flex-gt-md="33">
         <md-card-title>
             <md-card-title-text>
-                <span class="md-headline">Login</span>
+                <span class="md-headline">{{'login' | translate}}</span>
             </md-card-title-text>
         </md-card-title>
         <md-card-content>
             <form name="loginForm" ng-submit="ctrl.login(username, password); ctrl.flags.loginBusy=true" layout="column" layout-align="stretch center">
                 <md-input-container>
-                    <label>Username</label>
+                    <label>{{'username' | translate}}</label>
                     <input ng-model="username" name="username" ng-disabled="ctrl.flags.loginBusy" required autofocus>
                 </md-input-container>
 
                 <md-input-container>
-                    <label>Password</label>
+                    <label>{{'password' | translate}}</label>
                     <input ng-model="password" name="password" type="password" ng-disabled="ctrl.flags.loginBusy" required>
                 </md-input-container>
                 <div layout="row" layout-align="center center" ng-show="!!ctrl.loginError">
@@ -23,8 +23,8 @@
                     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
                 </div>
                 <div layout="row" layout-align="end">
-                    <md-button type="submit" ng-disabled="ctrl.flags.loginBusy">Register</md-button>
-                    <md-button type="submit" class="md-primary md-raised" ng-disabled="ctrl.flags.loginBusy">Login</md-button>
+                    <md-button type="submit" ng-disabled="ctrl.flags.loginBusy">{{'register' | translate}}</md-button>
+                    <md-button type="submit" class="md-primary md-raised" ng-disabled="ctrl.flags.loginBusy">{{'login' | translate}}</md-button>
                 </div>
             </form>
         </md-card-content>
